@@ -2,8 +2,8 @@ apiVersion: v1
 entries:
   mealie:
   - apiVersion: v2
-    appVersion: v2.4.1
-    created: "2025-01-18T20:07:55.8199079+01:00"
+    appVersion: v2.4.2
+    created: "2025-01-31T13:21:38.2143166+01:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -12,7 +12,7 @@ entries:
     description: Mealie is a self hosted recipe manager and meal planner with a RestAPI
       backend and a reactive frontend application built in Vue for a pleasant user
       experience for the whole family.
-    digest: b4c5932260634563c7df7ca64cc97abda7391dd09f21d7dbf20bbed4cbbbe95f
+    digest: dda5b464dc361c63c1120dc4cdc6ed0c03cc81827d3acc850ca35259781bcce3
     keywords:
     - mealie
     kubeVersion: '>=1.16.0-0'
@@ -22,22 +22,22 @@ entries:
     sources:
     - https://github.com/mealie-recipes/mealie
     urls:
-    - https://DouweMeulenbroek.github.io/helm-mealie/charts/mealie-1.0.0.tgz
-    version: 1.0.0
+    - https://DouweMeulenbroek.github.io/helm-mealie/charts/mealie-1.0.2.tgz
+    version: 1.0.2
   postgresql:
   - annotations:
       category: Database
       images: |
         - name: os-shell
-          image: docker.io/bitnami/os-shell:12-debian-12-r27
+          image: docker.io/bitnami/os-shell:12-debian-12-r34
         - name: postgres-exporter
-          image: docker.io/bitnami/postgres-exporter:0.15.0-debian-12-r39
+          image: docker.io/bitnami/postgres-exporter:0.16.0-debian-12-r2
         - name: postgresql
-          image: docker.io/bitnami/postgresql:16.4.0-debian-12-r0
+          image: docker.io/bitnami/postgresql:17.2.0-debian-12-r5
       licenses: Apache-2.0
     apiVersion: v2
-    appVersion: 16.4.0
-    created: "2025-01-18T20:07:55.824909+01:00"
+    appVersion: 17.2.0
+    created: "2025-01-31T13:21:38.2253181+01:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -47,7 +47,7 @@ entries:
     description: PostgreSQL (Postgres) is an open source object-relational database
       known for reliability and data integrity. ACID-compliant, it supports foreign
       keys, joins, views, triggers and stored procedures.
-    digest: aa3d94ab2f99ce3e5f634122990c769c44cba4e77c194f46ba1f7980eabffa98
+    digest: 62b45ba1a5744574afdf7f01901cf284f4b1c9c4d80e494ffd63b46426236261
     home: https://bitnami.com
     icon: https://bitnami.com/assets/stacks/postgresql/img/postgresql-stack-220x234.png
     keywords:
@@ -64,6 +64,6 @@ entries:
     sources:
     - https://github.com/bitnami/charts/tree/main/bitnami/postgresql
     urls:
-    - https://DouweMeulenbroek.github.io/helm-mealie/charts/postgresql-15.5.21.tgz
-    version: 15.5.21
-generated: "2025-01-18T20:07:55.8129068+01:00"
+    - https://DouweMeulenbroek.github.io/helm-mealie/charts/postgresql-16.3.5.tgz
+    version: 16.3.5
+generated: "2025-01-31T13:21:38.2023205+01:00"
