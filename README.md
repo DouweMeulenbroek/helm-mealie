@@ -47,10 +47,8 @@ Certificates: Certmanager
 # Implemented but UNTESTED
 - LDAP
 - NGINX Ingress
-- Local storage
 
 # Features to be implemented
-- local storage.
 - LDAP integrated in the HELM-charts as subchart.
 - Hardening recommendations.
 - Fail2Ban

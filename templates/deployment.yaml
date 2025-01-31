@@ -18,7 +18,7 @@ spec:
       #To wait for the postgresql database to be accessable before starting mealie itself which depends upon it.
         - name: init-mydb
           image: busybox:stable
-          command: ['sh', '-c', "sleep 10; until telnet {{  printf "%s-postgresql.%s.svc.cluster.local" .Release.Name  .Release.Namespace  }}:{{ .Values.global.postgresql.auth.port }}; do sleep 2; done"]
+          command: ['sh', '-c', "sleep 5; until telnet {{  printf "%s-postgresql.%s.svc.cluster.local" .Release.Name  .Release.Namespace  }}:{{ .Values.global.postgresql.auth.port }}; do sleep 15; done"]
       {{- end }}  
       containers:
         - name: {{ .Values.appName }}
@@ -66,9 +66,10 @@ spec:
                   key: SMTP_USER
             {{- end }}                           
           volumeMounts: 
-            - name: mealie-api-data
-              mountPath: /app/data # The images from the recipes are stored here.
+            - mountPath: /app/data 
+            # The images from the recipes are stored here.
+              name: mealie-api-data-{{ .Release.Namespace }}
       volumes:
-        - name: mealie-api-data
+        - name: mealie-api-data-{{ .Release.Namespace }}
           persistentVolumeClaim:
-            claimName: mealie-api-data-claim
+            claimName: mealie-api-data-claim-{{ .Release.Namespace }}
