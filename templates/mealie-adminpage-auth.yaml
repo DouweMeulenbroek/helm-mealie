@@ -1,0 +1,23 @@
+
+{{- if and .Values.ingress.traefik.enabled .Values.ingress.traefik.middleware.auth.enabled  }}
+
+{{- $Password := default (randAlphaNum 32) .Values.ingress.traefik.middleware.auth.password  | b64enc | quote }}
+{{- if not .Values.ingress.traefik.middleware.auth.password  }}
+{{- $existingSecret := (lookup "v1" "Secret" .Release.Namespace "mealie-adminpage-auth") }}
+{{- if $existingSecret }}
+{{- $Password = index $existingSecret.data "password"}}
+{{- end -}}
+{{- end -}}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mealie-adminpage-auth
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Values.appName }}
+type: kubernetes.io/basic-auth
+stringData:
+  username: {{ .Values.ingress.traefik.middleware.auth.username | default "admin" }} 
+  password: {{ $Password }} 
+{{- end }}

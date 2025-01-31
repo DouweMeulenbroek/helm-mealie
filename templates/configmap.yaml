@@ -1,0 +1,89 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mealie-configmap
+  namespace: {{ .Release.Namespace }}
+data:
+  #Global variables for mealie
+  PUID: {{ .Values.config.puid | default 911 | quote }}
+  PGID: {{ .Values.config.pgid | default 911 | quote  }}
+  # DEFAULT_USER: 'Douwe' #not native
+  DEFAULT_GROUP: {{ .Values.config.default_group | default "Home" }}
+  DEFAULT_HOUSEHOLD: {{ .Values.config.default_household | default "Family" }}
+  BASE_URL: {{ .Values.config.base_url | quote }}
+  TOKEN_TIME: {{ .Values.config.token_time | default 48 | quote  }}
+  API_DOCS: {{ .Values.config.api_docs | default "true" | quote  }}
+  TZ: {{ .Values.config.tz | default "Europe/Amsterdam"}}
+  ALLOW_SIGNUPS: {{ .Values.config.allow_signups | default "false" | quote}}
+#Logging
+  # LOG_CONFIG_OVERRIDE: {{  .Values.config.log_config_override }}
+  # LOG_LEVEL: {{  .Values.config.log_level | default "info" }}
+  # DAILY_SCHEDULE_TIME: {{  .Values.config.daily_schedule_time | default "23:45" | quote }}
+
+  #Security
+  SECURITY_MAX_LOGIN_ATTEMPTS: {{ .Values.config.security.max_login_attempts | default "5" | quote }}
+  SECURITY_USER_LOCKOUT_TIME: {{ .Values.config.security.user_lockout_time | default "24" | quote}}
+
+#DB Environment variables
+  {{- if .Values.postgresql.enabled }}
+  DB_ENGINE: {{ .Values.postgresql.db_engine | quote }}
+  POSTGRES_USER: {{ .Values.global.postgresql.auth.username | quote }}
+  POSTGRES_PORT: {{ .Values.global.postgresql.auth.port | quote }}
+  POSTGRES_DB: {{ .Values.global.postgresql.auth.database | quote }}
+  
+  # POSTGRES_PASSWORD: {{ .Values.postgresql.password | quote }} #This is supplied in the statefulset and secret
+  # POSTGRES_SERVER: {{ .Values.postgresql.server | quote  }} #Supplied in a secret can be done here aswell
+  {{- end }}
+
+
+#Mail settings
+  {{- if .Values.smtp.enabled }}
+  SMTP_HOST: {{ .Values.smtp.host | default "mail.your-server.de" }}
+  SMTP_PORT: {{ .Values.smtp.port | default 587 | quote }}
+  SMTP_FROM_NAME: {{ .Values.smtp.from_name | default "Koken met Douwe" }}
+  SMTP_AUTH_STRATEGY: {{ .Values.smtp.auth_strategy | default "TLS" }}
+  SMTP_FROM_EMAIL: {{ .Values.smtp.from_email | default "recepten@meulenbroek.net" }}
+  # SMTP_USER: {{ .Values.smtp.user | default "recepten@meulenbroek.net" }}
+  # SMTP_PASSWORD: {{ .Values.smtp.password | default "" }}
+  {{- end }}
+#Webworkers
+  UVICORN_WORKERS: {{ .Values.config.uvicorn_workers | default "1" | quote }} 
+
+# TLS settings 
+# Use this only when mealie is run without a webserver or reverse proxy
+  {{- if .Values.tls.enabled }}
+  TLS_CERTIFICATE_PATH: {{ .Values.tls.certificate_path | default "None" | quote}} 
+  TLS_PRIVATE_KEY_PATH: {{ .Values.tls.private_key_path | default "None" | quote }} 
+  {{- end }}
+
+# ldap
+  {{- if .Values.ldap.enabled }}
+# ldap https://nightly.mealie.io/documentation/getting-started/installation/backend-config/#ldap
+  LDAP_AUTH_ENABLED: {{ .Values.ldap.auth_enabled | default false | quote }}
+  LDAP_SERVER_URL: {{ .Values.ldap.server_url | default "ldap.example.com" }}
+  LDAP_TLS_INSECURE: {{ .Values.ldap.tls_insecure | default "false" }}
+  LDAP_TLS_CACERTFILE: {{ .Values.ldap.cacertfile }}     #"(e.g. /path/to/ca.crt)"
+  LDAP_ENABLE_STARTTLS: {{ .Values.ldap.enable_starttls | default "None" | quote }}
+  LDAP_BASE_DN: {{ .Values.ldap.basedn | default "CN=Users,DC=xx,DC=yy,DC=de" }}
+  LDAP_QUERY_BIND: {{ .Values.ldap.query_bind | default "cn=admin,cn=users,dc=example,dc=com" }}
+  LDAP_QUERY_PASSWORD: {{ .Values.ldap.query_password | default "SUPERSECRETPASSWORD" }}
+  LDAP_USER_FILTER: {{ .Values.ldap.user_filter | default "memberOf=cn=mealie_user,dc=example,dc=com" }}
+  LDAP_ADMIN_FILTER: {{ .Values.ldap.admin_filter | default  "memberOf=cn=admins,dc=example,dc=com)" }}
+  LDAP_ID_ATTRIBUTE: {{ .Values.ldap.id_attribute | default "uid" }}
+  LDAP_NAME_ATTRIBUTE: {{ .Values.ldap.name_attribute | default "name" }}
+  LDAP_MAIL_ATTRIBUTE: {{ .Values.ldap.mail_attribute | default "mail" }}
+  {{- end }}
+
+# OpenAI
+  {{- if .Values.openai.enabled }}
+# https://docs.mealie.io/documentation/getting-started/installation/backend-config/#openai
+  OPENAI_BASE_URL: {{ .Values.openai.base_url | default "https://api.openai.com/v1" }}
+  OPENAI_API_KEY: {{ .Values.openai.api_key | default "None" | quote }}
+  OPENAI_MODEL: {{ .Values.openai.model | default "gpt-4o" }}
+  OPENAI_ENABLE_IMAGE_SERVICES: {{ .Values.openai.enable_image_services | default true | quote }}
+  OPENAI_WORKERS: {{ .Values.openai.workers | default 2 | quote}}
+  OPENAI_SEND_DATABASE_DATA: {{ .Values.openai.send_database_data | default true | quote }}
+  OPENAI_REQUEST_TIMEOUT: {{ .Values.openai.request_timeout | default 60 | quote}}
+  {{- end }}
+# Theming
+

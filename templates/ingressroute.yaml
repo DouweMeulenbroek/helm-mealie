@@ -1,0 +1,65 @@
+---
+{{- if and .Values.ingress.traefik.enabled (not .Values.ingress.nginx.enabled ) }}
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ .Release.Name }}-ingress
+  namespace: {{ .Release.namespace }}
+  annotations:
+    kubernetes.io/ingress.class: {{ .Values.ingress.traefik.ingressClass | quote }}
+spec:
+  middlewaresNamespace: {{ .Release.namespace }}
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`{{ .Values.config.base_url }}`)
+      kind: Rule
+      services:
+        - name: {{ .Values.service.name | quote }}
+          port: {{ .Values.service.port }}
+      middlewares:
+        - name: default-headers     
+
+    - match: "Host(`{{ .Values.config.base_url }}`) && PathPrefix(`/admin`)"
+      kind: Rule
+      services:
+        - name: {{ .Values.service.name | quote }}
+          port: {{ .Values.service.port }}
+      middlewares:
+        - name: mealie-adminpage
+        - name: default-headers
+
+    - match:  "Host(`{{ .Values.config.base_url }}`) && PathPrefix(`/docs`)"
+      kind: Rule
+      services:
+        - name: {{ .Values.service.name | quote }}
+          port: {{ .Values.service.port }}
+      middlewares:
+        - name: mealie-adminpage
+        - name: default-headers
+
+#For security reasons
+    - match: "Host(`{{ .Values.config.base_url }}`) && PathPrefix(`/api/recipes/create/url`)"
+      kind: Rule
+      services:
+        - name: {{ .Values.service.name | quote }}
+          port: {{ .Values.service.port }}
+      middlewares:
+        - name: mealie-ratelimit
+        - name: default-headers
+
+#For security reasons
+    - match: "Host(`{{ .Values.config.base_url }}`) && PathPrefix(`/api/recipes/{id}/image`)"
+      kind: Rule
+      services:
+        - name: {{ .Values.service.name | quote }}
+          port: {{ .Values.service.port }}
+      middlewares:
+        - name: mealie-ratelimit
+
+  tls:
+    secretName: "kokenmetdouwe-nl-tls"
+    options:
+      name: {{ .Values.ingress.traefik.tls.options | quote}}
+      namespace: {{ .Release.Namespace }}
+{{- end }}

@@ -1,0 +1,137 @@
+appName: mealie-webservice
+ingress:
+  traefik:
+    enabled: true
+    ingressClass: traefik-external #Change this to match your IngressClass
+    middleware:
+      auth:
+        enabled: true
+        credentials:
+          username: "" #Default is "admin"
+          password: "" # If not set it will be generated 
+    tls:
+      secret: YOUR-SUPER-SECRET-CERTIFICATE-tls 
+      #Certificate secret managed by Certmanager
+      options: tls-strong
+  nginx:
+    enabled: false #Set this to true if you don't use Traefik, set the other to false
+    ingressClass: Nginx
+
+service:
+  name: "mealie-frontend"
+  type: ClusterIP
+  portName: http
+  protocol: TCP
+  port: 80
+  targetPort: 9000
+
+persistance:
+  enabled: true
+  size: "10Gi"
+  storageClassName: "longhorn"
+  accessModes: "ReadWriteOnce"
+  
+container:
+  limits:
+    enabled: false
+    memory: "2048Mi"
+    cpu: "1000m"
+  port: 9000
+
+image:
+  repository: "ghcr.io/mealie-recipes/mealie"
+  tag: "v2.4.2"  
+
+replicaCount: 1  # Corrected typo from replicatCount
+config:  # Backend configuration
+  puid: ""              #Default is 911
+  pgid: ""              #Default is 911
+  default_group: "Cook-a-Meulenbroek" #Default is Home
+  default_household: "Cook-a-Meulenbroek" #Default is Family
+  base_url: YOUR-AWESOME-DOMAIN-HERE #Test URL
+  token_time: ""        #Default is 48
+  TZ: ""                #Default is "Europe/Amsterdam" 
+  allow_signups: ""     #Default is false 
+  uvicorn_workers: ""   #Default is 1
+  API_DOCS: ""          #Default is True
+  
+
+  # Logging (Uncomment if needed)
+  # log_config_override: 
+  # log_level: 
+
+  security:
+    max_login_attempts: ""  #Default is 5
+    user_lockout_time: ""   #Default is 24
+
+postgresql:
+  enabled: true        #Enable if you want to use Postgresql as your database instead of SQLlite
+  manualsecrets: false # Set to true if you want to supply your own secrets
+  db_engine: "postgres"
+
+global:
+  postgresql:
+    # url_override: "None"
+    auth:
+      port: "5432"
+      database: "mealiedb"
+      username: "mealie"
+      password: "" # If not set it will be generated 
+      postgresPassword: "" #"If not set it will be generated
+      existingSecret: mealie-postgres-secret
+      secretKeys:
+        adminPasswordKey: postgresPassword
+        userPasswordKey: password
+      replicationPasswordKey: ""
+    ## @param global.postgresql.auth.existingSecret Name of existing secret to use for PostgreSQL credentials (overrides `auth.existingSecret`).
+    ## @param global.postgresql.auth.secretKeys.adminPasswordKey Name of key in existing secret to use for PostgreSQL credentials (overrides `auth.secretKeys.adminPasswordKey`). Only used when `global.postgresql.auth.existingSecret` is set.
+    ## @param global.postgresql.auth.secretKeys.userPasswordKey Name of key in existing secret to use for PostgreSQL credentials (overrides `auth.secretKeys.userPasswordKey`). Only used when `global.postgresql.auth.existingSecret` is set.
+    ## @param global.postgresql.auth.secretKeys.replicationPasswordKey Name of key in existing secret to use for PostgreSQL credentials (overrides `auth.secretKeys.replicationPasswordKey`). Only used when `global.postgresql.auth.existingSecret` is set.
+
+# Email configuration
+smtp:
+  enabled: false
+  host: ""
+  port: 587
+  from_name: ""
+  auth_strategy: "TLS"
+  from_email: ""
+  user: ""
+  password: ""
+
+  uvicorn_workers: 1
+ 
+tls: #Use this only when mealie is run without a webserver or reverse proxy.
+#With this helmchart TLS is handled by the Traefik ingressRoute or NGINX.
+  enabled: false
+  certificate_path: "None"
+  private_key_path: "None"
+
+ldap:
+#This can be used to centralize user management instead of relying on Mealie's local user management.
+  enabled: false
+  auth_enabled: false 
+  server_url: "ldap.example.com"
+  tls_insecure: false 
+  tls_cacertfile: "/path/to/ca.crt"
+  enable_starttls: "None"
+  base_dn: "cn=users,dc=xx,dc=yy,dc=de"
+  query_bind: "cn=admin,cn=users,dc=example,dc=com"
+  query_password: ""
+  user_filter: "memberof=cn=mealie_user,dc=example,dc=com"
+  admin_filter: "memberof=cn=admins,dc=example,dc=com"
+  id_attribute: "uid"
+  name_attribute: "name"
+  mail_attribute: "mail"
+
+openai:
+  enabled: false
+  base_url: "https://api.openai.com/v1"
+  api_key: ""
+  model: "gpt-4"  
+  enable_image_services: true  
+  workers: 2  
+  send_database_data: true  
+  request_timeout: 60
+
+

@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.appName }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.appName }}
+  replicas: {{ .Values.replicaCount }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appName }}
+    spec:
+      {{- if .Values.postgresql.enabled }}
+      initContainers:
+      #To wait for the postgresql database to be accessable before starting mealie itself which depends upon it.
+        - name: init-mydb
+          image: busybox:stable
+          command: ['sh', '-c', "sleep 10; until telnet {{  printf "%s-postgresql.%s.svc.cluster.local" .Release.Name  .Release.Namespace  }}:{{ .Values.global.postgresql.auth.port }}; do sleep 2; done"]
+      {{- end }}  
+      containers:
+        - name: {{ .Values.appName }}
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          resources:
+            {{- if .Values.container.limits.enabled }}
+            limits:
+              memory: {{ .Values.container.limits.memory | quote }}
+              cpu: {{ .Values.container.limits.cpu | quote }}
+            {{- end }}
+          ports:
+            - containerPort: {{ .Values.container.port }}
+          envFrom:
+            - configMapRef:
+                name: mealie-configmap
+          env:
+            {{- if .Values.postgresql.enabled }}
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mealie-postgres-secret
+                  key: password
+            - name: POSTGRES_SERVER
+              valueFrom:
+                secretKeyRef:
+                  name: mealie-postgres-server-secret
+                  key: postgres-server
+            {{- end }}
+            # Mail secrets
+            {{- if .Values.smtp.enabled }}
+            - name: SMTP_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: mealie-smtp-secret
+                  key: SMTP_HOST    
+            - name: SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mealie-smtp-secret
+                  key: SMTP_PASSWORD
+            - name: SMTP_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mealie-smtp-secret
+                  key: SMTP_USER
+            {{- end }}                           
+          volumeMounts: 
+            - name: mealie-api-data
+              mountPath: /app/data # The images from the recipes are stored here.
+      volumes:
+        - name: mealie-api-data
+          persistentVolumeClaim:
+            claimName: mealie-api-data-claim
