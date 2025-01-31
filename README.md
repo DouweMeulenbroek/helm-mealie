@@ -14,14 +14,14 @@ Requirements:
 ```bash
 helm repo add helm-mealie https://DouweMeulenbroek.github.io/helm-mealie
 helm repo update
-helm install mealie helm-mealie/mealie --create-namespace
+helm install mealie helm-mealie/mealie --create-namespace -n {{ Your Prefered Namespace }}
 ```
 
 ## Upgrade
 If you want to upgrade values to suite newer configuration or update you can use the following command to upgrade your installation.
-
 ```bash
-helm upgrade mealie mealie/mealie
+helm repo update
+helm upgrade mealie mealie/mealie {Your Namespace}
 ```
 
 # Configuration
