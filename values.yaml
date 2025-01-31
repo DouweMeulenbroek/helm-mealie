@@ -25,12 +25,18 @@ service:
   port: 80
   targetPort: 9000
 
-persistance:
-  enabled: true
+storage:
+  persistentVolumeReclaimPolicy: "Retain"
+  #Retain, Delete or Recyle
+  storage_provider: "local-storage"
+  #Either longhorn or local storage
   size: "10Gi"
-  storageClassName: "longhorn"
-  accessModes: "ReadWriteOnce"
-  
+  storageClassName: "local-path"
+  hostPath:  "/mealie"
+  #Either longhorn or default or what your personal storagClassName is
+  accessModes: "ReadWriteMany"
+#Do note that hostPath does not support ReadWriteMany and defaults to ReadWriteOnce
+
 container:
   limits:
     enabled: false
@@ -40,7 +46,7 @@ container:
 
 image:
   repository: "ghcr.io/mealie-recipes/mealie"
-  tag: "v2.4.2"  
+  tag: "v2.5.0"  
 
 replicaCount: 1  # Corrected typo from replicatCount
 config:  # Backend configuration

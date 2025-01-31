@@ -8,7 +8,6 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: {{ .Values.ingress.traefik.ingressClass | quote }}
 spec:
-  middlewaresNamespace: {{ .Release.namespace }}
   entryPoints:
     - websecure
   routes:
@@ -18,7 +17,8 @@ spec:
         - name: {{ .Values.service.name | quote }}
           port: {{ .Values.service.port }}
       middlewares:
-        - name: default-headers     
+        - name: default-headers
+          namespace: {{ .Release.namespace }}
 
     - match: "Host(`{{ .Values.config.base_url }}`) && PathPrefix(`/admin`)"
       kind: Rule
@@ -27,7 +27,9 @@ spec:
           port: {{ .Values.service.port }}
       middlewares:
         - name: mealie-adminpage
+          namespace: {{ .Release.namespace }}
         - name: default-headers
+          namespace: {{ .Release.namespace }}
 
     - match:  "Host(`{{ .Values.config.base_url }}`) && PathPrefix(`/docs`)"
       kind: Rule
@@ -36,7 +38,9 @@ spec:
           port: {{ .Values.service.port }}
       middlewares:
         - name: mealie-adminpage
+          namespace: {{ .Release.namespace }}        
         - name: default-headers
+          namespace: {{ .Release.namespace }}        
 
 #For security reasons
     - match: "Host(`{{ .Values.config.base_url }}`) && PathPrefix(`/api/recipes/create/url`)"
@@ -46,7 +50,9 @@ spec:
           port: {{ .Values.service.port }}
       middlewares:
         - name: mealie-ratelimit
+          namespace: {{ .Release.namespace }}        
         - name: default-headers
+          namespace: {{ .Release.namespace }}        
 
 #For security reasons
     - match: "Host(`{{ .Values.config.base_url }}`) && PathPrefix(`/api/recipes/{id}/image`)"
@@ -56,7 +62,7 @@ spec:
           port: {{ .Values.service.port }}
       middlewares:
         - name: mealie-ratelimit
-
+          namespace: {{ .Release.namespace }} 
   tls:
     secretName: "kokenmetdouwe-nl-tls"
     options:
