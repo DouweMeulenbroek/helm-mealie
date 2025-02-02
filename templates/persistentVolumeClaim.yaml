@@ -1,6 +1,7 @@
----
-kind: PersistentVolumeClaim
+{{- $pvc := lookup "v1" "PersistentVolumeClaim" .Release.Namespace (printf "mealie-api-data-claim-%s" .Release.Namespace) }}
+{{- if not $pvc }}
 apiVersion: v1
+kind: PersistentVolumeClaim
 metadata:
   namespace: {{ .Release.Namespace }}
   name: mealie-api-data-claim-{{ .Release.Namespace }}
@@ -11,3 +12,6 @@ spec:
   resources:
     requests:
       storage: {{ .Values.storage.size }}
+{{- else }}
+# PVC already exists, skipping creation
+{{- end }}
