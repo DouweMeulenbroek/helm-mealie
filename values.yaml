@@ -46,7 +46,7 @@ container:
 
 image:
   repository: "ghcr.io/mealie-recipes/mealie"
-  tag: "v2.5.0"  
+  tag: "v2.6.0"  
 
 replicaCount: 1  # Corrected typo from replicatCount
 config:  # Backend configuration
