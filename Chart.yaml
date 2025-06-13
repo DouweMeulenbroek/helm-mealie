@@ -1,7 +1,7 @@
 apiVersion: v2
 name: mealie
 description: Mealie is a self hosted recipe manager and meal planner with a RestAPI backend and a reactive frontend application built in Vue for a pleasant user experience for the whole family.
-version: 1.0.6
+version: 1.1.0
 appVersion: "v2.8.0"
 kubeVersion: ">=1.16.0-0"
 keywords:
@@ -10,7 +10,7 @@ sources:
   - https://github.com/mealie-recipes/mealie
 dependencies:
   - name: postgresql
-    version:  17.5.0
+    version:  16.7.5 #This is a chart version, not app version.
     repository: "https://charts.bitnami.com/bitnami"
     condition: postgresql.enabled
 maintainers:

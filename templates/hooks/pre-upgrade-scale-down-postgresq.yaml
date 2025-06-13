@@ -1,0 +1,24 @@
+{{- if .Values.postgresql.upgrade.database }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pg-scale-down
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": pre-upgrade
+    "helm.sh/hook-weight": "4"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
+spec:
+  template:
+    spec:
+      serviceAccountName: pg-dump-restore
+      restartPolicy: Never
+      containers:
+      - name: scale-down
+        image: bitnami/kubectl:latest
+        command: ["/bin/bash", "-c"]
+        args:
+          - |
+            echo "📉 Scaling down PostgreSQL StatefulSet..."
+            kubectl scale statefulset {{ .Release.Name }}-postgresql --replicas=0 -n {{ .Release.Namespace }}
+{{- end }}
