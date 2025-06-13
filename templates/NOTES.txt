@@ -1,16 +1,12 @@
 
 Thank you for installing this Helm chart!
 
-Namespace & Release name:
-  Your application has been deployed to the namespace: {{ .Release.Namespace }}
-  The release name is: {{ .Release.Name }}
+Your application has been deployed to the namespace: {{ .Release.Namespace }}
+The release name is: {{ .Release.Name }}
 
-IngressRoute URL:
-  You can access your application via the following URL:
-  {{ .Values.config.base_url }}
+You can access your application via the following URL:
+{{ .Values.config.base_url }}
 
 This application is using {{ .Values.postgresql.db_engine }} as the database.
-  - If the value is "sqlite", the application is using SQLite.
-  - If the value is "postgresql", the application is using PostgreSQL.
 
 Please refer to the documentation for further details on how to interact with your deployed application: https://docs.mealie.io/

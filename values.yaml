@@ -46,9 +46,9 @@ container:
 
 image:
   repository: "ghcr.io/mealie-recipes/mealie"
-  tag: "v2.6.0"  
+  tag: "v2.8.0"
 
-replicaCount: 1  # Corrected typo from replicatCount
+replicaCount: 1
 config:  # Backend configuration
   puid: ""              #Default is 911
   pgid: ""              #Default is 911
@@ -71,9 +71,13 @@ config:  # Backend configuration
     user_lockout_time: ""   #Default is 24
 
 postgresql:
-  enabled: true        #Enable if you want to use Postgresql as your database instead of SQLlite
+  enabled: false        #Enable if you want to use Postgresql as your database instead of SQLlite
   manualsecrets: false # Set to true if you want to supply your own secrets
   db_engine: "postgres"
+  upgrade:
+    database: false
+    temp_storage: false
+    cleanup_ready: false
 
 global:
   postgresql:

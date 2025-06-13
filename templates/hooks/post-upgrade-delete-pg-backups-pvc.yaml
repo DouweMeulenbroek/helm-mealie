@@ -1,0 +1,31 @@
+{{- if .Values.postgresql.cleanup_ready }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: delete-pg-backup-pvc
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": post-upgrade
+    "helm.sh/hook-delete-policy": hook-succeeded
+    "helm.sh/hook-weight": "19"  
+spec:
+  template:
+    spec:
+      serviceAccountName: pvc-cleanup-sa
+      containers:
+        - name: delete-pvc
+          image: bitnami/kubectl:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "Checking if PVC 'pg-backup-pvc' exists in namespace {{ .Release.Namespace }}..."
+              if kubectl get pvc pg-backup-pvc -n {{ .Release.Namespace }} > /dev/null 2>&1; then
+                echo "PVC found. Deleting..."
+                kubectl delete pvc pg-backup-pvc -n {{ .Release.Namespace }}
+              else
+                echo "PVC not found. Skipping delete."
+              fi
+      restartPolicy: Never
+  backoffLimit: 1
+{{- end }}

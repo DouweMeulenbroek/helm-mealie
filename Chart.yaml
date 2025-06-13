@@ -10,7 +10,7 @@ sources:
   - https://github.com/mealie-recipes/mealie
 dependencies:
   - name: postgresql
-    version:  17.5.0
+    version:  16.7.5 #This is a chart version, not app version.
     repository: "https://charts.bitnami.com/bitnami"
     condition: postgresql.enabled
 maintainers:

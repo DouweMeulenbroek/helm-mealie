@@ -15,3 +15,31 @@ spec:
 {{- else }}
 # PVC already exists, skipping creation
 {{- end }}
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: mealie-api-data-claim-{{ .Release.Namespace }}
+spec:
+  storageClassName: longhorn
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: {{ .Values.storage.size }}
+
+---
+{{- if .Values.postgresql.upgrade.temp_storage }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pg-backup-pvc
+  namespace: {{ .Release.Namespace }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.storage.size }}
+{{- end }}
