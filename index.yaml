@@ -3,7 +3,7 @@ entries:
   mealie:
   - apiVersion: v2
     appVersion: v2.8.0
-    created: "2025-06-25T06:51:54.1509327+02:00"
+    created: "2025-06-25T08:17:04.512531+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -12,7 +12,7 @@ entries:
     description: Mealie is a self hosted recipe manager and meal planner with a RestAPI
       backend and a reactive frontend application built in Vue for a pleasant user
       experience for the whole family.
-    digest: 207104d7b3f99edca73fe23c0047a2da71e37fad14d6a623d5eebfc4619bd300
+    digest: 6657110ea74f7bff2547396fbef49c2408fa57b2c8cc212d3cf86559f1186ae4
     keywords:
     - mealie
     kubeVersion: '>=1.16.0-0'
@@ -22,7 +22,7 @@ entries:
     sources:
     - https://github.com/mealie-recipes/mealie
     urls:
-    - https://github.com/DouweMeulenbroek/helm-mealie/charts/mealie-1.1.0.tgz
+    - https://DouweMeulenbroek.github.io/helm-mealie/charts/mealie-1.1.0.tgz
     version: 1.1.0
   postgresql:
   - annotations:
@@ -38,7 +38,7 @@ entries:
       tanzuCategory: service
     apiVersion: v2
     appVersion: 17.5.0
-    created: "2025-06-25T06:51:54.1559632+02:00"
+    created: "2025-06-25T08:17:04.517072+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -65,6 +65,6 @@ entries:
     sources:
     - https://github.com/bitnami/charts/tree/main/bitnami/postgresql
     urls:
-    - https://github.com/DouweMeulenbroek/helm-mealie/charts/postgresql-16.7.5.tgz
+    - https://DouweMeulenbroek.github.io/helm-mealie/charts/postgresql-16.7.5.tgz
     version: 16.7.5
-generated: "2025-06-25T06:51:54.1457943+02:00"
+generated: "2025-06-25T08:17:04.5060016+02:00"
