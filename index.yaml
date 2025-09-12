@@ -2,8 +2,8 @@ apiVersion: v1
 entries:
   mealie:
   - apiVersion: v2
-    appVersion: v2.8.0
-    created: "2025-06-25T08:17:04.512531+02:00"
+    appVersion: v3.1.2
+    created: "2025-09-12T14:13:12.0465759+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -12,7 +12,7 @@ entries:
     description: Mealie is a self hosted recipe manager and meal planner with a RestAPI
       backend and a reactive frontend application built in Vue for a pleasant user
       experience for the whole family.
-    digest: 6657110ea74f7bff2547396fbef49c2408fa57b2c8cc212d3cf86559f1186ae4
+    digest: 5bfc77329e1cd31d05ad0f318616a47fc5db76312686ec2c1dcb1ddf726a34ea
     keywords:
     - mealie
     kubeVersion: '>=1.16.0-0'
@@ -22,7 +22,30 @@ entries:
     sources:
     - https://github.com/mealie-recipes/mealie
     urls:
-    - https://DouweMeulenbroek.github.io/helm-mealie/charts/mealie-1.1.0.tgz
+    - mealie-1.1.1.tgz
+    version: 1.1.1
+  - apiVersion: v2
+    appVersion: v3.1.2
+    created: "2025-09-12T14:13:12.04207+02:00"
+    dependencies:
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 16.7.5
+    description: Mealie is a self hosted recipe manager and meal planner with a RestAPI
+      backend and a reactive frontend application built in Vue for a pleasant user
+      experience for the whole family.
+    digest: ec867ba73ab2d1fb7ae6813e814d0c2bab215c26b6455a8d0a996104857d58b8
+    keywords:
+    - mealie
+    kubeVersion: '>=1.16.0-0'
+    maintainers:
+    - name: Douwe Meulenbroek
+    name: mealie
+    sources:
+    - https://github.com/mealie-recipes/mealie
+    urls:
+    - mealie-1.1.0.tgz
     version: 1.1.0
   postgresql:
   - annotations:
@@ -38,7 +61,7 @@ entries:
       tanzuCategory: service
     apiVersion: v2
     appVersion: 17.5.0
-    created: "2025-06-25T08:17:04.517072+02:00"
+    created: "2025-09-12T14:13:12.0495752+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -65,6 +88,6 @@ entries:
     sources:
     - https://github.com/bitnami/charts/tree/main/bitnami/postgresql
     urls:
-    - https://DouweMeulenbroek.github.io/helm-mealie/charts/postgresql-16.7.5.tgz
+    - charts/postgresql-16.7.5.tgz
     version: 16.7.5
-generated: "2025-06-25T08:17:04.5060016+02:00"
+generated: "2025-09-12T14:13:12.0385617+02:00"
