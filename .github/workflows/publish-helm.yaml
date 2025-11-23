@@ -34,13 +34,15 @@ jobs:
           sudo apt-get install -y python3-pip
           pip3 install yq
 
-      # 4️⃣ Lint the chart
+      # 4️⃣ Update Helm dependencies (including PostgreSQL)
+      - name: Update Helm dependencies
+        run: helm dependency update charts/mealie
+
+      # 5️⃣ Lint the chart
       - name: Lint Helm chart
         run: helm lint charts/mealie
 
-      # 5️⃣ Update Helm dependencies (including PostgreSQL)
-      - name: Update Helm dependencies
-        run: helm dependency update charts/mealie
+
 
       # 6️⃣ Determine version bump based on commit messages
       - name: Determine version bump
