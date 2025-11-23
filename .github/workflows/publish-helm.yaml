@@ -8,6 +8,9 @@ on:
       - 'charts/**'
       - '.github/workflows/publish-helm.yaml'
   workflow_dispatch:  # <-- allows manual run from GitHub UI
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 jobs:
   publish:
     runs-on: ubuntu-latest
