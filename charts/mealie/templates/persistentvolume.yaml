@@ -1,0 +1,18 @@
+{{- if eq .Values.storage.storage_provider "local-storage" }}
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: mealie-api-data-{{ .Release.Namespace }}
+spec:
+  capacity:
+    storage: {{ .Values.storage.size }}
+  accessModes:
+    - {{ .Values.storage.accessModes }}
+  persistentVolumeReclaimPolicy: {{ .Values.storage.persistentVolumeReclaimPolicy }}
+  storageClassName: {{ .Values.storage.storageClassName }}
+  hostPath:
+    path: {{ .Values.storage.hostPath}}
+    type: DirectoryOrCreate
+{{- end }}

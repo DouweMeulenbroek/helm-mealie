@@ -1,0 +1,58 @@
+{{- if .Values.postgresql.upgrade.database }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pg-dump-job
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": pre-upgrade
+    "helm.sh/hook-weight": "-14"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
+spec:
+  template:
+    spec:
+      serviceAccountName: pg-dump-restore
+      restartPolicy: Never
+
+      initContainers:
+        - name: fix-permissions
+          image: busybox
+          command: ["sh", "-c"]
+          args:
+            - |
+              echo "🔧 Fixing permissions on /backups volume..."
+              mkdir -p /backups
+              chmod -R 777 /backups
+          volumeMounts:
+            - name: backup-pvc
+              mountPath: /backups
+
+      containers:
+        - name: pg-dump
+          image: bitnami/postgresql:16
+          command: ["/bin/bash", "-c"]
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ default "mealie-postgres-secret" .Values.global.postgresql.auth.existingSecret | quote }}
+                  key: password
+          args:
+            - |
+              set -e
+              export PGPASSWORD="$POSTGRES_PASSWORD"
+              echo "📦 Dumping PostgreSQL database to PVC..."
+              pg_dump -h {{ .Release.Name }}-postgresql.{{ .Release.Namespace }}.svc.cluster.local \
+                      -U {{ .Values.global.postgresql.auth.username }} \
+                      -d {{ .Values.global.postgresql.auth.database }} \
+                      -F p -f /backups/pg16_dump.sql
+              echo "✅ Dump complete"
+          volumeMounts:
+            - name: backup-pvc
+              mountPath: /backups
+
+      volumes:
+        - name: backup-pvc
+          persistentVolumeClaim:
+            claimName: pg-backup-pvc
+{{- end }}

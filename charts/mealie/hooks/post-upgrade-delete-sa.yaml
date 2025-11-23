@@ -1,0 +1,28 @@
+{{- if .Values.postgresql.cleanup_ready }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: cleanup-pvc-deleter-rbac
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": post-upgrade
+    "helm.sh/hook-delete-policy": hook-succeeded
+    "helm.sh/hook-weight": "20"  # runs after the PVC deletion job (hook-weight: 0)
+spec:
+  template:
+    spec:
+      serviceAccountName: pvc-cleanup-sa
+      containers:
+        - name: cleanup-rbac
+          image: bitnami/kubectl:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "Cleaning up RBAC resources..."
+              kubectl delete rolebinding pvc-cleanup-binding -n {{ .Release.Namespace }} || true
+              kubectl delete role pvc-cleanup-role -n {{ .Release.Namespace }} || true
+              kubectl delete serviceaccountpvc-cleanup-sa -n {{ .Release.Namespace }} || true
+      restartPolicy: Never
+  backoffLimit: 1
+{{- end }}

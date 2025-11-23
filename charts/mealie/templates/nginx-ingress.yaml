@@ -1,0 +1,22 @@
+{{- if and .Values.ingress.nginx.enabled (not .Values.ingress.traefik.enabled)  }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name:  {{ .Release.Name }}-ingress
+  namespace:  {{ .Release.namespace }}
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - host: {{ .Values.config.base_url }} # Change this to your domain
+      http:
+        paths:
+          - path: /  # Path to route traffic to
+            pathType: Prefix
+            backend:
+              service:
+                name:  {{ .Values.service.name | quote }}
+                port:
+                  number: {{ .Values.service.port }} 
+{{- end }}
