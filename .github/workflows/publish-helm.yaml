@@ -124,7 +124,10 @@ jobs:
       # 🔟 Update Helm repo index
       - name: Update Helm repo index
         run: |
-          helm repo index . --url https://douwemeulenbroek.github.io/helm-mealie/
+          # Generate index for the charts/ folder
+          helm repo index charts --url https://douwemeulenbroek.github.io/helm-mealie/charts
+          # Move the generated index.yaml to the root of gh-pages
+          mv charts/index.yaml .
 
       # 1️⃣1️⃣ Commit and push changes
       - name: Commit and push
