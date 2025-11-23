@@ -7,7 +7,7 @@ on:
     paths:
       - 'charts/**'
       - '.github/workflows/publish-helm.yaml'
-
+  workflow_dispatch:  # <-- allows manual run from GitHub UI
 jobs:
   publish:
     runs-on: ubuntu-latest
