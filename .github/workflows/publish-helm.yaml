@@ -130,4 +130,7 @@ jobs:
           else
             VERSION=$(grep '^version:' charts/mealie/Chart.yaml | awk '{print $2}')
             git commit -m "Publish chart version $VERSION"
-            git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }} gh-pages
+            git push https://x-access-token:${GITHUB_TOKEN}@github.com/DouweMeulenbroek/helm-mealie gh-pages
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
