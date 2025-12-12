@@ -1,0 +1,35 @@
+{{- if and .Values.ingress.traefik.enabled .Values.ingress.traefik.middleware.auth.enabled }}
+
+{{- $username := "" }}
+{{- $password := "" }}
+{{- $secretName := "mealie-adminpage-auth" }}
+{{- $existingSecret := lookup "v1" "Secret" .Release.Namespace $secretName }}
+
+{{- if and $existingSecret (hasKey $existingSecret.data "username") }}
+  {{- $username = index $existingSecret.data "username" | b64dec }}
+{{- else }}
+  {{- $username = .Values.ingress.traefik.middleware.auth.credentials.username | default "admin" }}
+{{- end }}
+
+{{- if and $existingSecret (hasKey $existingSecret.data "password") }}
+  {{- $password = index $existingSecret.data "password" | b64dec }}
+{{- else if .Values.ingress.traefik.middleware.auth.credentials.password }}
+  {{- $password = .Values.ingress.traefik.middleware.auth.credentials.password }}
+{{- else }}
+  {{- $password = randAlphaNum 32 }}
+{{- end }}
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ $secretName }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Values.appName | default .Chart.Name }}
+type: kubernetes.io/basic-auth
+stringData:
+  username: {{ $username }}
+  password: {{ $password }}
+
+{{- end }}
