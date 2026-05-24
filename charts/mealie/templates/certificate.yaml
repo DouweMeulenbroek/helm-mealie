@@ -14,5 +14,5 @@ spec:
     kind: {{ .Values.certificate.issuerRef.kind }}
   commonName: {{ .Values.certificate.commonName }}
   dnsNames:
-    - {{ .Values.base_url }}
+    - {{ .Values.certificate.dnsName }}
 {{- end }}
