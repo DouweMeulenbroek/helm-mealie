@@ -2,7 +2,7 @@ appName: mealie-webservice
 ingress:
   traefik:
     enabled: true
-    ingressClass: traefik-external #Change this to match your IngressClass
+    ingressClass: traefik #Change this to match your IngressClass
     middleware:
       auth:
         enabled: true
@@ -12,10 +12,22 @@ ingress:
     tls:
       secret: YOUR-SUPER-SECRET-CERTIFICATE-tls 
       #Certificate secret managed by Certmanager
+      #This name must be the same as the .Values.certificate.secretName in certificate.yaml
       options: tls-strong
   nginx:
     enabled: false #Set this to true if you don't use Traefik, set the other to false
     ingressClass: Nginx
+
+certificate:
+  enabled: True #Set to True if you want to use Certmanager to manage your TLS certificates, set to false if you want to use your own certificates or if you don't want TLS
+  name: YOUR-MEALIE-DOMAIN # For example mealie-example-com
+  secretName: YOUR-MEALIE-DOMAIN-tls # For example mealie-example-com-tls
+  issuerRef:
+    name: YOUR-CLUSTER-ISSUER-HERE
+    kind: ClusterIssuer
+  commonName: YOUR-MEALIE-DOMAIN # For example mealie-example-com
+  dnsName:
+    - YOUR-MEALIE-DOMAIN #This must be the same as config.base_url.
 
 service:
   name: "mealie-frontend"
@@ -54,7 +66,7 @@ config:  # Backend configuration
   pgid: ""              #Default is 911
   default_group: "Cook-a-Meulenbroek" #Default is Home
   default_household: "Cook-a-Meulenbroek" #Default is Family
-  base_url: YOUR-AWESOME-DOMAIN-HERE #Test URL
+  base_url: YOUR-AWESOME-DOMAIN-HERE # Do not include http or https.
   token_time: ""        #Default is 48
   TZ: ""                #Default is "Europe/Amsterdam" 
   allow_signups: ""     #Default is false 
