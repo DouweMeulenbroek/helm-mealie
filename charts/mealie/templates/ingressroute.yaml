@@ -5,8 +5,7 @@ kind: IngressRoute
 metadata:
   name: {{ .Release.Name }}-ingress
   namespace: {{ .Release.namespace }}
-  annotations:
-    kubernetes.io/ingress.className: {{ .Values.ingress.traefik.ingressClassName | quote }}
+    
 spec:
   entryPoints:
     - websecure
