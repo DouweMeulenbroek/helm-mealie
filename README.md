@@ -10,7 +10,15 @@ Requirements:
 - Roughly 10GB of storage to allocate
 - Edit the values.yaml to suite your configuration.
 
-Optional:
+## NOTE Longhorn
+If you do use longhorn you must install nfs-common  and isci tools
+```bash
+sudo apt update
+sudo apt install -y nfs-common
+sudo apt install -y open-iscsi
+sudo systemctl enable --now iscsid
+```
+Optional: 
 - Longhorn
 - NGINX instead of Traefik (implemented but untested)
 

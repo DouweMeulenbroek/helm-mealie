@@ -6,7 +6,7 @@ metadata:
   name: {{ .Release.Name }}-ingress
   namespace: {{ .Release.namespace }}
   annotations:
-    kubernetes.io/ingress.class: {{ .Values.ingress.traefik.ingressClass | quote }}
+    kubernetes.io/ingress.className: {{ .Values.ingress.traefik.ingressClassName | quote }}
 spec:
   entryPoints:
     - websecure
