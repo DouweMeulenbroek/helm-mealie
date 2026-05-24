@@ -64,7 +64,7 @@ spec:
         - name: mealie-ratelimit
           namespace: {{ .Release.namespace }} 
   tls:
-    secretName: "kokenmetdouwe-nl-tls"
+    secretName: {{ .Values.certificate.secretName | quote }}
     options:
       name: {{ .Values.ingress.traefik.tls.options | quote}}
       namespace: {{ .Release.Namespace }}

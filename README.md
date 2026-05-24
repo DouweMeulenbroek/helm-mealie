@@ -4,11 +4,15 @@ I personally like cooking but always  loose my recipes. Combining my passion for
 
 # Installation
 Requirements:
-- Longhorn 
+- CertManager
 - Traefik
-- an domain which is used to serve mealie
+- A domain which is used to serve mealie
 - Roughly 10GB of storage to allocate
 - Edit the values.yaml to suite your configuration.
+
+Optional:
+- Longhorn
+- NGINX instead of Traefik (implemented but untested)
 
 ## Installation command
 ```bash
