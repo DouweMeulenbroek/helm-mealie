@@ -35,6 +35,29 @@ spec:
             - configMapRef:
                 name: mealie-configmap
           env:
+            {{- if .Values.oidc.enabled }}
+            - name: OIDC_AUTH_ENABLED
+              value: {{ .Values.oidc.enabled | quote }}
+            - name: OIDC_SIGNUP_ENABLED
+              value: {{ .Values.oidc.signupEnabled | quote }}
+            - name: OIDC_PROVIDER_NAME
+              value: {{ .Values.oidc.providerName | quote }}
+            - name: OIDC_CONFIGURATION_URL
+              value: {{ .Values.oidc.configUrl | quote }}
+            - name: OIDC_CLIENT_ID
+              value: {{ .Values.oidc.clientId | quote }}
+            - name: OIDC_ADMIN_GROUP
+              value: {{ .Values.oidc.adminGroup | quote }}
+            - name: OIDC_USER_GROUP
+              value: {{ .Values.oidc.userGroup | quote }}
+            - name: OIDC_AUTO_REDIRECT
+              value: {{ .Values.oidc.autoRedirect | quote }}
+            - name: OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: mealie-oidc
+                  key: OIDC_CLIENT_SECRET          
+            {{- end }}                  
             {{- if .Values.postgresql.enabled }}
             - name: POSTGRES_PASSWORD
               valueFrom:

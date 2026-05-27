@@ -146,6 +146,18 @@ ldap:
   name_attribute: "name"
   mail_attribute: "mail"
 
+
+oidc:
+  enabled: false
+  providerName: authentik
+  configUrl: "https://authentik.example.com/application/o/mealie/.well-known/openid-configuration"
+  clientId: "mealie"
+  clientSecret: "SUPER_SECRET"
+  adminGroup: "mealie-production-admins"
+  userGroup: "mealie-production-users"
+  autoRedirect: false
+  signupEnabled: true
+
 openai:
   enabled: false
   base_url: "https://api.openai.com/v1"
