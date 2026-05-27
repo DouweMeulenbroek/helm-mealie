@@ -74,6 +74,16 @@ data:
   LDAP_MAIL_ATTRIBUTE: {{ .Values.ldap.mail_attribute | default "mail" }}
   {{- end }}
 
+  OIDC_AUTH_ENABLED: {{ .Values.oidc.enabled | quote }}
+  OIDC_SIGNUP_ENABLED: {{ .Values.oidc.signupEnabled | quote }}
+  OIDC_PROVIDER_NAME: {{ .Values.oidc.providerName | quote }}
+  OIDC_CONFIGURATION_URL: {{ .Values.oidc.configurationUrl | quote }}
+  OIDC_CLIENT_ID: {{ .Values.oidc.clientId | quote }}
+  OIDC_CLIENT_SECRET: {{ .Values.oidc.clientSecret | quote }}
+  OIDC_AUTO_REDIRECT: {{ .Values.oidc.autoRedirect | quote }}
+  OIDC_USER_GROUP: {{ .Values.oidc.userGroup | quote }}
+  OIDC_ADMIN_GROUP: {{ .Values.oidc.adminGroup | quote }}
+
 # OpenAI
   {{- if .Values.openai.enabled }}
 # https://docs.mealie.io/documentation/getting-started/installation/backend-config/#openai
