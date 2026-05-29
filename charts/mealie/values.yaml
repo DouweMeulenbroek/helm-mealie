@@ -149,14 +149,16 @@ ldap:
 
 oidc:
   enabled: false
-  providerName: authentik
-  configUrl: "https://authentik.example.com/application/o/mealie/.well-known/openid-configuration"
+  signupEnabled: true  
+  providerName: your-provider-here
+  configurationUrl: "https://authentik.example.com/application/o/mealie/.well-known/openid-configuration"
   clientId: "mealie"
   clientSecret: "SUPER_SECRET"
-  adminGroup: "mealie-production-admins"
+  autoRedirect: true
   userGroup: "mealie-production-users"
-  autoRedirect: false
-  signupEnabled: true
+  adminGroup: "mealie-production-admins"
+
+
 
 openai:
   enabled: false
