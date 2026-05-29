@@ -1,0 +1,12 @@
+
+Thank you for installing this Helm chart!
+
+Your application has been deployed to the namespace: {{ .Release.Namespace }}
+The release name is: {{ .Release.Name }}
+
+You can access your application via the following URL:
+{{ .Values.config.base_url }}
+
+This application is using {{ .Values.postgresql.db_engine }} as the database.
+
+Please refer to the documentation for further details on how to interact with your deployed application: https://docs.mealie.io/

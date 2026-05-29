@@ -1,0 +1,43 @@
+{{- if .Values.postgresql.upgrade.database }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: restore-post-upgrade
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": post-upgrade
+    "helm.sh/hook-weight": "-10"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
+spec:
+  template:
+    spec:
+      serviceAccountName: pg-dump-restore
+      restartPolicy: Never
+      containers:
+        - name: restore
+          image: bitnami/postgresql:17.5.0
+          command: ["/bin/bash", "-c"]
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ default "mealie-postgres-secret" .Values.global.postgresql.auth.existingSecret | quote }}
+                  key: password
+          args:
+            - |
+              set -e
+              export PGPASSWORD="$POSTGRES_PASSWORD"
+              echo "📥 Restoring PostgreSQL from /backups/pg16_dump.sql..."
+              psql -h {{ .Release.Name }}-postgresql.{{ .Release.Namespace }}.svc.cluster.local \
+                   -U {{ .Values.global.postgresql.auth.username }} \
+                   -d {{ .Values.global.postgresql.auth.database }} \
+                   -f /backups/pg16_dump.sql
+              echo "✅ Restore complete"
+          volumeMounts:
+            - name: backup-pvc
+              mountPath: /backups
+      volumes:
+        - name: backup-pvc
+          persistentVolumeClaim:
+            claimName: pg-backup-pvc
+{{- end }}
