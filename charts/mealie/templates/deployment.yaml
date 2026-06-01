@@ -35,6 +35,10 @@ spec:
             - configMapRef:
                 name: mealie-configmap
           env:
+            - TRUSTED_PROXIES:
+              value: "*"
+            - FORWARDED_ALLOW_IPS:
+              value: "*"
             {{- if .Values.oidc.enabled }}
             - name: OIDC_AUTH_ENABLED
               value: {{ .Values.oidc.enabled | quote }}
