@@ -150,7 +150,7 @@ ldap:
 
 oidc:
   enabled: false
-  signupEnabled: true  
+  signupEnabled: true
   providerName: your-provider-here
   configurationUrl: https://authentik.example.com/application/o/mealie/.well-known/openid-configuration
   clientId: mealie
