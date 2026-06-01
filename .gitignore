@@ -3,3 +3,4 @@ personal_values_testenv.yaml
 output.yaml
 postgresql-*.tgz
 Chart.lock
+rendered.yaml
