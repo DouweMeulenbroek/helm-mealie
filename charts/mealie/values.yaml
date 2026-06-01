@@ -2,6 +2,7 @@ appName: mealie-webservice
 ingress:
   traefik:
     enabled: true
+    host: YOUR-FQDN #This should be your FQDN
     ingressClass: traefik #Change this to match your IngressClass
     middleware:
       auth:
@@ -66,7 +67,7 @@ config:  # Backend configuration
   pgid: ""              #Default is 911
   default_group: "Cook-a-Meulenbroek" #Default is Home
   default_household: "Cook-a-Meulenbroek" #Default is Family
-  base_url: YOUR-AWESOME-DOMAIN-HERE # Do not include http or https.
+  base_url: https:/YOUR-AWESOME-DOMAIN-HERE # Do include http or https.
   token_time: ""        #Default is 48
   TZ: ""                #Default is "Europe/Amsterdam" 
   allow_signups: ""     #Default is false 
@@ -151,12 +152,12 @@ oidc:
   enabled: false
   signupEnabled: true  
   providerName: your-provider-here
-  configurationUrl: "https://authentik.example.com/application/o/mealie/.well-known/openid-configuration"
-  clientId: "mealie"
-  clientSecret: "SUPER_SECRET"
+  configurationUrl: https://authentik.example.com/application/o/mealie/.well-known/openid-configuration
+  clientId: mealie
+  clientSecret: SUPER_SECRET
   autoRedirect: true
-  userGroup: "mealie-production-users"
-  adminGroup: "mealie-production-admins"
+  userGroup: mealie-production-users
+  adminGroup: mealie-production-admins
 
 
 

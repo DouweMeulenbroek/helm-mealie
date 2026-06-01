@@ -10,7 +10,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`{{ .Values.config.base_url }}`)
+    - match: Host(`{{ .Values.ingress.traefik.host }}`)
       kind: Rule
       services:
         - name: {{ .Values.service.name | quote }}
@@ -19,7 +19,7 @@ spec:
         - name: default-headers
           namespace: {{ .Release.namespace }}
 
-    - match: "Host(`{{ .Values.config.base_url }}`) && PathPrefix(`/admin`)"
+    - match: "Host(`{{ .Values.ingress.traefik.host }}`) && PathPrefix(`/admin`)"
       kind: Rule
       services:
         - name: {{ .Values.service.name | quote }}
@@ -30,7 +30,7 @@ spec:
         - name: default-headers
           namespace: {{ .Release.namespace }}
 
-    - match:  "Host(`{{ .Values.config.base_url }}`) && PathPrefix(`/docs`)"
+    - match:  "Host(`{{ .Values.ingress.traefik.host }}`) && PathPrefix(`/docs`)"
       kind: Rule
       services:
         - name: {{ .Values.service.name | quote }}
@@ -42,7 +42,7 @@ spec:
           namespace: {{ .Release.namespace }}        
 
 #For security reasons
-    - match: "Host(`{{ .Values.config.base_url }}`) && PathPrefix(`/api/recipes/create/url`)"
+    - match: "Host(`{{ .Values.ingress.traefik.host }}`) && PathPrefix(`/api/recipes/create/url`)"
       kind: Rule
       services:
         - name: {{ .Values.service.name | quote }}
@@ -54,7 +54,7 @@ spec:
           namespace: {{ .Release.namespace }}        
 
 #For security reasons
-    - match: "Host(`{{ .Values.config.base_url }}`) && PathPrefix(`/api/recipes/{id}/image`)"
+    - match: "Host(`{{ .Values.ingress.traefik.host }}`) && PathPrefix(`/api/recipes/{id}/image`)"
       kind: Rule
       services:
         - name: {{ .Values.service.name | quote }}
