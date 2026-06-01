@@ -75,13 +75,13 @@ data:
   {{- end }}
 
   {{- if .Values.oidc.enabled }}
-  OIDC_AUTH_ENABLED: {{ .Values.oidc.enabled }}
-  OIDC_SIGNUP_ENABLED: {{ .Values.oidc.signupEnabled }}
+  OIDC_AUTH_ENABLED: {{ .Values.oidc.enabled | quote }}
+  OIDC_SIGNUP_ENABLED: {{ .Values.oidc.signupEnabled | quote }}
   OIDC_PROVIDER_NAME: {{ .Values.oidc.providerName | quote }}
   OIDC_CONFIGURATION_URL: {{ .Values.oidc.configurationUrl | quote }}
   OIDC_CLIENT_ID: {{ .Values.oidc.clientId | quote }}
   OIDC_CLIENT_SECRET: {{ .Values.oidc.clientSecret | quote }}
-  OIDC_AUTO_REDIRECT: {{ .Values.oidc.autoRedirect }}
+  OIDC_AUTO_REDIRECT: {{ .Values.oidc.autoRedirect | quote}}
   OIDC_USER_GROUP: {{ .Values.oidc.userGroup | quote }}
   OIDC_ADMIN_GROUP: {{ .Values.oidc.adminGroup | quote }}
   {{- end }}
