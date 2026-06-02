@@ -15,6 +15,7 @@ data:
   API_DOCS: {{ .Values.config.api_docs | default "true" | quote  }}
   TZ: {{ .Values.config.tz | default "Europe/Amsterdam"}}
   ALLOW_SIGNUPS: {{ .Values.config.allow_signups | default "false" | quote}}
+  ALLOW_PASSWORD_LOGIN: {{ .Values.config.allow_password_login | default "true" | quote}}
 #Logging
   # LOG_CONFIG_OVERRIDE: {{  .Values.config.log_config_override }}
   # LOG_LEVEL: {{  .Values.config.log_level | default "info" }}

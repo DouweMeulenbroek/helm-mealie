@@ -70,7 +70,8 @@ config:  # Backend configuration
   base_url: https:/YOUR-AWESOME-DOMAIN-HERE # Do include http or https.
   token_time: ""        #Default is 48
   TZ: ""                #Default is "Europe/Amsterdam" 
-  allow_signups: ""     #Default is false 
+  allow_signups: ""     #Default is false
+  allow_password_login: "" #Default is true
   uvicorn_workers: ""   #Default is 1
   API_DOCS: ""          #Default is True
   
@@ -150,7 +151,7 @@ ldap:
 
 oidc:
   enabled: false
-  signupEnabled: true
+  signupEnabled: false
   providerName: your-provider-here
   configurationUrl: https://authentik.example.com/application/o/mealie/.well-known/openid-configuration
   clientId: mealie
