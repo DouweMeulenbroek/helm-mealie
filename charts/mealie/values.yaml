@@ -77,7 +77,7 @@ config:  # Backend configuration
 
   # Logging (Uncomment if needed)
   # log_config_override: 
-  # log_level: 
+  log_level: info #Either info or debug
 
   security:
     max_login_attempts: ""  #Default is 5
