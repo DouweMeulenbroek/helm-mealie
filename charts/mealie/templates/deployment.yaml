@@ -18,7 +18,7 @@ spec:
       #To wait for the postgresql database to be accessable before starting mealie itself which depends upon it.
         - name: init-mydb
           image: busybox:stable
-          command: ['sh', '-c', "sleep 5; until telnet {{  printf "%s-postgresql.%s.svc.cluster.local" .Release.Name  .Release.Namespace  }}:{{ .Values.global.postgresql.auth.port }}; do sleep 15; done"]
+          command: ['sh', '-c', "sleep 5; until telnet {{  printf "%s-postgresql.%s.svc.cluster.local" .Release.Name  .Release.Namespace  }}:{{ .Values.postgresql.auth.port }}; do sleep 15; done"]
       {{- end }}  
       containers:
         - name: {{ .Values.appName }}
@@ -63,19 +63,20 @@ spec:
                 secretKeyRef:
                   name: mealie-oidc
                   key: OIDC_CLIENT_SECRET          
-            {{- end }}                  
+            {{- end }}
+
+            # Database secrets / runtime values
             {{- if .Values.postgresql.enabled }}
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: mealie-postgres-secret
-                  key: password
+                  name: {{ .Values.postgresql.auth.existingSecret | quote }}
+                  key: {{ .Values.postgresql.auth.secretKeys.userPasswordKey | default "password" | quote }}
+
             - name: POSTGRES_SERVER
-              valueFrom:
-                secretKeyRef:
-                  name: mealie-postgres-server-secret
-                  key: postgres-server
+              value: {{ printf "%s-postgresql" .Release.Name | quote }}
             {{- end }}
+
             # Mail secrets
             {{- if .Values.smtp.enabled }}
             - name: SMTP_HOST
@@ -93,7 +94,8 @@ spec:
                 secretKeyRef:
                   name: mealie-smtp-secret
                   key: SMTP_USER
-            {{- end }}                           
+            {{- end }}           
+
           volumeMounts: 
             - mountPath: /app/data 
             # The images from the recipes are stored here.

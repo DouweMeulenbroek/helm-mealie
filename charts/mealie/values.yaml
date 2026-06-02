@@ -59,7 +59,7 @@ container:
 
 image:
   repository: "ghcr.io/mealie-recipes/mealie"
-  tag: "v3.6.1"
+  tag: "v3.19.2"
 
 replicaCount: 1
 config:  # Backend configuration
@@ -85,31 +85,31 @@ config:  # Backend configuration
 
 postgresql:
   enabled: false        #Enable if you want to use Postgresql as your database instead of SQLlite
-  manualsecrets: false # Set to true if you want to supply your own secrets
   db_engine: "postgres"
+  auth:
+    username: "mealie"
+    database: "mealiedb"
+    port: "5432"
+
+    # Required when postgresql.enabled=true and existingSecret is empty.
+    # Do not auto-generate these for persistent PVC setups.
+    password: ""
+    postgresPassword: ""
+
+    # Recommended: create/manage this secret yourself, or let the chart create it from explicit values.
+    existingSecret: "mealie-postgres-secret"
+
+    secretKeys:
+      adminPasswordKey: "postgresPassword"
+      userPasswordKey: "password"
+      replicationPasswordKey: ""
+
+  passwordUpdateJob:
+    enabled: false  
   upgrade:
     database: false
     temp_storage: false
     cleanup_ready: false
-
-global:
-  postgresql:
-    # url_override: "None"
-    auth:
-      port: "5432"
-      database: "mealiedb"
-      username: "mealie"
-      password: "" # If not set it will be generated 
-      postgresPassword: "" #"If not set it will be generated
-      existingSecret: mealie-postgres-secret
-      secretKeys:
-        adminPasswordKey: postgresPassword
-        userPasswordKey: password
-      replicationPasswordKey: ""
-    ## @param global.postgresql.auth.existingSecret Name of existing secret to use for PostgreSQL credentials (overrides `auth.existingSecret`).
-    ## @param global.postgresql.auth.secretKeys.adminPasswordKey Name of key in existing secret to use for PostgreSQL credentials (overrides `auth.secretKeys.adminPasswordKey`). Only used when `global.postgresql.auth.existingSecret` is set.
-    ## @param global.postgresql.auth.secretKeys.userPasswordKey Name of key in existing secret to use for PostgreSQL credentials (overrides `auth.secretKeys.userPasswordKey`). Only used when `global.postgresql.auth.existingSecret` is set.
-    ## @param global.postgresql.auth.secretKeys.replicationPasswordKey Name of key in existing secret to use for PostgreSQL credentials (overrides `auth.secretKeys.replicationPasswordKey`). Only used when `global.postgresql.auth.existingSecret` is set.
 
 # Email configuration
 smtp:
