@@ -35,6 +35,8 @@ spec:
             - configMapRef:
                 name: mealie-configmap
           env:
+            - name: LOG_LEVEL
+              value: {{ .Values.config.log_level | quote }}
             - name: TRUSTED_PROXIES
               value: "*"
             - name: FORWARDED_ALLOW_IPS
