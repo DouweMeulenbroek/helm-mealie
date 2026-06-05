@@ -47,7 +47,7 @@ storage:
   storageClassName: "local-path"
   hostPath:  "/mealie"
   #Either longhorn or default or what your personal storagClassName is
-  accessModes: "ReadWriteMany"
+  accessModes: "ReadWriteOnce"
 #Do note that hostPath does not support ReadWriteMany and defaults to ReadWriteOnce
 
 container:
