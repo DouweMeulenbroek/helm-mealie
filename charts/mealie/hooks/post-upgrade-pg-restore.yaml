@@ -21,7 +21,7 @@ spec:
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ default "mealie-postgres-secret" .Values.global.postgresql.auth.existingSecret | quote }}
+                  name: {{ default "mealie-postgres-secret" .Values.postgresql.auth.existingSecret | quote }}
                   key: password
           args:
             - |
@@ -29,8 +29,8 @@ spec:
               export PGPASSWORD="$POSTGRES_PASSWORD"
               echo "📥 Restoring PostgreSQL from /backups/pg16_dump.sql..."
               psql -h {{ .Release.Name }}-postgresql.{{ .Release.Namespace }}.svc.cluster.local \
-                   -U {{ .Values.global.postgresql.auth.username }} \
-                   -d {{ .Values.global.postgresql.auth.database }} \
+                   -U {{ .Values.postgresql.auth.username }} \
+                   -d {{ .Values.postgresql.auth.database }} \
                    -f /backups/pg16_dump.sql
               echo "✅ Restore complete"
           volumeMounts:

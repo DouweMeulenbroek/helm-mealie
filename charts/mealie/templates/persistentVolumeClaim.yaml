@@ -24,7 +24,7 @@ metadata:
 spec:
   storageClassName: longhorn
   accessModes:
-    - ReadWriteMany
+    - {{ .Values.storage.accessModes }}
   resources:
     requests:
       storage: {{ .Values.storage.size }}

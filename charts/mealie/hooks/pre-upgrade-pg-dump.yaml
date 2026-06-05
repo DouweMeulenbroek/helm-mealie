@@ -35,7 +35,7 @@ spec:
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ default "mealie-postgres-secret" .Values.global.postgresql.auth.existingSecret | quote }}
+                  name: {{ default "mealie-postgres-secret" .Values.postgresql.auth.existingSecret | quote }}
                   key: password
           args:
             - |
@@ -43,8 +43,8 @@ spec:
               export PGPASSWORD="$POSTGRES_PASSWORD"
               echo "📦 Dumping PostgreSQL database to PVC..."
               pg_dump -h {{ .Release.Name }}-postgresql.{{ .Release.Namespace }}.svc.cluster.local \
-                      -U {{ .Values.global.postgresql.auth.username }} \
-                      -d {{ .Values.global.postgresql.auth.database }} \
+                      -U {{ .Values.postgresql.auth.username }} \
+                      -d {{ .Values.postgresql.auth.database }} \
                       -F p -f /backups/pg16_dump.sql
               echo "✅ Dump complete"
           volumeMounts:

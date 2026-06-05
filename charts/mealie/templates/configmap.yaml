@@ -15,6 +15,7 @@ data:
   API_DOCS: {{ .Values.config.api_docs | default "true" | quote  }}
   TZ: {{ .Values.config.tz | default "Europe/Amsterdam"}}
   ALLOW_SIGNUPS: {{ .Values.config.allow_signups | default "false" | quote}}
+  ALLOW_PASSWORD_LOGIN: {{ .Values.config.allow_password_login | default "true" | quote}}
 #Logging
   # LOG_CONFIG_OVERRIDE: {{  .Values.config.log_config_override }}
   # LOG_LEVEL: {{  .Values.config.log_level | default "info" }}
@@ -27,12 +28,9 @@ data:
 #DB Environment variables
   {{- if .Values.postgresql.enabled }}
   DB_ENGINE: {{ .Values.postgresql.db_engine | quote }}
-  POSTGRES_USER: {{ .Values.global.postgresql.auth.username | quote }}
-  POSTGRES_PORT: {{ .Values.global.postgresql.auth.port | quote }}
-  POSTGRES_DB: {{ .Values.global.postgresql.auth.database | quote }}
-  
-  # POSTGRES_PASSWORD: {{ .Values.postgresql.password | quote }} #This is supplied in the statefulset and secret
-  # POSTGRES_SERVER: {{ .Values.postgresql.server | quote  }} #Supplied in a secret can be done here aswell
+  POSTGRES_USER: {{ .Values.postgresql.auth.username | quote }}
+  POSTGRES_PORT: {{ .Values.postgresql.auth.port | quote }}
+  POSTGRES_DB: {{ .Values.postgresql.auth.database | quote }}
   {{- end }}
 
 
