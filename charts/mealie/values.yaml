@@ -156,7 +156,7 @@ oidc:
   configurationUrl: https://authentik.example.com/application/o/mealie/.well-known/openid-configuration
   clientId: mealie
   clientSecret: SUPER_SECRET
-  autoRedirect: true
+  autoRedirect: false
   userGroup: mealie-production-users
   adminGroup: mealie-production-admins
 
