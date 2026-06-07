@@ -106,3 +106,17 @@ Certificates: Certmanager
 If the deployment of the statefulset is stuck 'missing pvc' you can rerun the upgrade command and it should then fix the missing PVC.
 
 
+# Restore a backup from the UI with Postgresql
+1. Connect to the database as the Postgres user with
+```bash
+kubectl exec -it -n mealie-migration mealie-migration-postgresql-0 -- psql -U postgres -d mealiedb
+```
+2. Alter the super rule for the mealie user
+```bash
+ALTER ROLE mealie WITH SUPERUSER;
+```
+3. Login to the new instance and restore a backup from the UI
+4. Downgrade your mealie user from within the postgres contrainer again
+```bash
+ ALTER ROLE mealie WITH NOSUPERUSER;
+ ```
