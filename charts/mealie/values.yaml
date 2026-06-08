@@ -133,7 +133,7 @@ tls: #Use this only when mealie is run without a webserver or reverse proxy.
 
 ldap:
 #This can be used to centralize user management instead of relying on Mealie's local user management.
-  enabled: false
+  enabled: false #default set to false
   auth_enabled: false 
   server_url: "ldap.example.com"
   tls_insecure: false 
@@ -147,7 +147,6 @@ ldap:
   id_attribute: "uid"
   name_attribute: "name"
   mail_attribute: "mail"
-
 
 oidc:
   enabled: false
@@ -164,12 +163,11 @@ oidc:
 
 openai:
   enabled: false
-  base_url: "https://api.openai.com/v1"
+  baseUrl: "https://api.openai.com/v1"
   api_key: ""
-  model: "gpt-4"  
-  enable_image_services: true  
-  workers: 2  
-  send_database_data: true  
+  model: "gpt-5"  
+  enable_image_services: true 
+  send_database_data: true
   request_timeout: 60
-
+  workers: 2
 
