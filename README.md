@@ -72,7 +72,7 @@ helm upgrade mealie helm-mealie/mealie -n {{ your namesapce }}
 
 # Configuration
 ## Must change values
-- .Values.config.base_url
+- .Values.config.baseUrl
 - .Values.ingress.traefik.tls.secret
 ## Important values
 In the values.yaml you can edit the configuration. 

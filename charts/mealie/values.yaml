@@ -28,7 +28,7 @@ certificate:
     kind: ClusterIssuer
   commonName: YOUR-MEALIE-DOMAIN # For example mealie-example-com
   dnsName:
-    - YOUR-MEALIE-DOMAIN #This must be the same as config.base_url.
+    - YOUR-MEALIE-DOMAIN #This must be the same as config.baseUrl.
 
 service:
   name: "mealie-frontend"
@@ -41,7 +41,7 @@ service:
 storage:
   persistentVolumeReclaimPolicy: "Retain"
   #Retain, Delete or Recyle
-  storage_provider: "local-storage"
+  storageProvider: "local-storage"
   #Either longhorn or local storage
   size: "10Gi"
   storageClassName: "local-path"
@@ -65,28 +65,28 @@ replicaCount: 1
 config:  # Backend configuration
   puid: ""              #Default is 911
   pgid: ""              #Default is 911
-  default_group: "Cook-a-Meulenbroek" #Default is Home
-  default_household: "Cook-a-Meulenbroek" #Default is Family
-  base_url: https:/YOUR-AWESOME-DOMAIN-HERE # Do include http or https.
+  defaultGroup: "Cook-a-YOU" #Default is Home
+  defaultHousehold: "Cook-a-YOU" #Default is Family
+  baseUrl: https://YOUR-AWESOME-DOMAIN-HERE # Do include http or https.
   token_time: ""        #Default is 48
   TZ: ""                #Default is "Europe/Amsterdam" 
-  allow_signups: ""     #Default is false
-  allow_password_login: "" #Default is true
-  uvicorn_workers: ""   #Default is 1
-  API_DOCS: ""          #Default is True
+  allowSignups: ""     #Default is False
+  allowPasswordLogin: "" #Default is true
+  uvicornWorkers: ""   #Default is 1
+  apiDocs: ""          #Default is False
   
 
   # Logging (Uncomment if needed)
   # log_config_override: 
-  log_level: info #Either info or debug
+  logLevel: info #Either info or debug
 
   security:
-    max_login_attempts: ""  #Default is 5
-    user_lockout_time: ""   #Default is 24
+    maxLoginAttempts: ""  #Default is 5
+    userLockoutTime: ""   #Default is 24
 
 postgresql:
   enabled: false        #Enable if you want to use Postgresql as your database instead of SQLlite
-  db_engine: "postgres"
+  dbEngine: "postgres"
   auth:
     username: "mealie"
     database: "mealiedb"
@@ -117,36 +117,42 @@ smtp:
   enabled: false
   host: ""
   port: 587
-  from_name: ""
-  auth_strategy: "TLS"
+  fromName: ""
+  authStrategy: "TLS"
   from_email: ""
   user: ""
-  password: ""
+  existingSecret: "" #If you have already created a secret with your SMTP credentials, put the name of that secret here. If not, the chart will create a new secret with the name "mealie-smtp-secret" and the keys "SMTP_USER" and "SMTP_PASSWORD".
+  secretKeys:
+    userKey: SMTP_USER
+    passwordKey: SMTP_PASSWORD
 
   uvicorn_workers: 1
  
 tls: #Use this only when mealie is run without a webserver or reverse proxy.
 #With this helmchart TLS is handled by the Traefik ingressRoute or NGINX.
   enabled: false
-  certificate_path: "None"
-  private_key_path: "None"
+  certificatePath: "None"
+  privateKeyPath: "None"
 
 ldap:
 #This can be used to centralize user management instead of relying on Mealie's local user management.
   enabled: false #default set to false
-  auth_enabled: false 
-  server_url: "ldap.example.com"
-  tls_insecure: false 
-  tls_cacertfile: "/path/to/ca.crt"
-  enable_starttls: "None"
-  base_dn: "cn=users,dc=xx,dc=yy,dc=de"
-  query_bind: "cn=admin,cn=users,dc=example,dc=com"
-  query_password: ""
-  user_filter: "memberof=cn=mealie_user,dc=example,dc=com"
-  admin_filter: "memberof=cn=admins,dc=example,dc=com"
-  id_attribute: "uid"
-  name_attribute: "name"
-  mail_attribute: "mail"
+  authEnabled: false 
+  serverUrl: "ldap.example.com"
+  tlsInsecure: false 
+  tlsCaCertFile: "/path/to/ca.crt"
+  enableStarTtls: "None"
+  baseDN: "cn=users,dc=xx,dc=yy,dc=de"
+  queryBind: "cn=admin,cn=users,dc=example,dc=com"
+  existingSecret: "" #If you have already created a secret with your LDAP query password, put the name of that secret here. If not, the chart will create a new secret with the name "mealie-ldap" and the key "LDAP_QUERY_PASSWORD".
+  queryPassword: ""
+  secretKeys:
+    queryPasswordKey: LDAP_QUERY_PASSWORD
+  userFilter: "memberof=cn=mealie_user,dc=example,dc=com"
+  adminFilter: "memberof=cn=admins,dc=example,dc=com"
+  idAttribute: "uid"
+  nameAttribute: "name"
+  mailAttribute: "mail"
 
 oidc:
   enabled: false
@@ -154,20 +160,26 @@ oidc:
   providerName: your-provider-here
   configurationUrl: https://authentik.example.com/application/o/mealie/.well-known/openid-configuration
   clientId: mealie
-  clientSecret: SUPER_SECRET
+  existingSecret: "" #If you have already created a secret with your OIDC client secret, put the name of that secret here. If not, the chart will create a new secret with the name "mealie-oidc" and the key "OIDC_CLIENT_SECRET".
+  clientSecret: ""
+  secretKeys:
+    clientSecretKey: OIDC_CLIENT_SECRET
   autoRedirect: false
-  userGroup: mealie-production-users
-  adminGroup: mealie-production-admins
+  userGroup: mealie-users
+  adminGroup: mealie-admins
 
 
 
 openai:
   enabled: false
   baseUrl: "https://api.openai.com/v1"
-  api_key: ""
   model: "gpt-5"  
-  enable_image_services: true 
-  send_database_data: true
-  request_timeout: 60
+  enableImageServices: true 
+  sendDatabaseData: true
+  requestTimeout: 60
   workers: 2
+  apiKey: ""
+  existingSecret: "" #If you have already created a secret with your OpenAI API key, put the name of that secret here. If not, the chart will create a new secret with the name "mealie-openai" and the key "OPENAI_API_KEY".
+  secretKeys:
+    apiKeyKey: "OPENAI_API_KEY"
 

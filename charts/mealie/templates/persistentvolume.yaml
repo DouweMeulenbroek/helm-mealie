@@ -1,4 +1,4 @@
-{{- if eq .Values.storage.storage_provider "local-storage" }}
+{{- if eq .Values.storage.storageProvider "local-storage" }}
 ---
 apiVersion: v1
 kind: PersistentVolume
