@@ -1,4 +1,4 @@
-{{- if .Values.postgresql.cleanup_ready }}
+{{- if .Values.postgresql.cleanupReady }}
 apiVersion: batch/v1
 kind: Job
 metadata:

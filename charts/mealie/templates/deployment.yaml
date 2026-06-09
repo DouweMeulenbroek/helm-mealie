@@ -4,10 +4,10 @@ metadata:
   name: {{ .Values.appName }}
   namespace: {{ .Release.Namespace }}
 spec:
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       app: {{ .Values.appName }}
-  replicas: {{ .Values.replicaCount }}
   template:
     metadata:
       labels:
@@ -15,145 +15,87 @@ spec:
     spec:
       {{- if .Values.postgresql.enabled }}
       initContainers:
-      #To wait for the postgresql database to be accessable before starting mealie itself which depends upon it.
-        - name: init-mydb
-          image: busybox:stable
-          command: ['sh', '-c', "sleep 5; until telnet {{  printf "%s-postgresql.%s.svc.cluster.local" .Release.Name  .Release.Namespace  }}:{{ .Values.postgresql.auth.port }}; do sleep 15; done"]
-      {{- end }}  
+        - name: wait-for-postgres
+          image: postgres:17.10
+          command:
+            - sh
+            - -c
+            - |
+              until pg_isready \
+                -h {{ printf "%s-postgresql" .Release.Name }} \
+                -p {{ .Values.postgresql.auth.port }};
+              do
+                echo "Waiting for PostgreSQL..."
+                sleep 5
+              done
+      {{- end }}
       containers:
         - name: {{ .Values.appName }}
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          ports:
+            - containerPort: {{ .Values.container.port }}
+          {{- if .Values.container.limits.enabled }}
           resources:
-            {{- if .Values.container.limits.enabled }}
             limits:
               memory: {{ .Values.container.limits.memory | quote }}
               cpu: {{ .Values.container.limits.cpu | quote }}
-            {{- end }}
-          ports:
-            - containerPort: {{ .Values.container.port }}
+          {{- end }}
+
           envFrom:
             - configMapRef:
                 name: mealie-configmap
+
           env:
-            - name: LOG_LEVEL
-              value: {{ .Values.config.log_level | quote }}
-            - name: TRUSTED_PROXIES
-              value: "*"
-            - name: FORWARDED_ALLOW_IPS
-              value: "*"
-
-            {{- if .Values.ldap.enabled }}
-            - name: LDAP_AUTH_ENABLED
-              value: {{ .Values.ldap.auth_Enabled | quote }}
-            - name: LDAP_SERVER_URL
-              value: {{ .Values.ldap.server_url | quote }}
-            - name: LDAP_TLS_INSECURE
-              value: {{ .Values.ldap.tls_insecure | quote | default "false" }}
-            - name: LDAP_TLS_CACERTFILE
-              value: {{ .Values.ldap.tls_cacertfile | quote }}
-            - name: LDAP_ENABLE_STARTTLS
-              value: {{ .Values.ldap.enable_starttls | quote }}
-            - name: LDAP_BASE_DN
-              value: {{ .Values.ldap.base_dn | quote }}
-            - name: LDAP_QUERY_BIND
-              value: {{ .Values.ldap.query_bind | quote }}
-            - name: LDAP_QUERY_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: mealie-ldap
-                  key: LDAP_QUERY_PASSWORD
-
-            - name: LDAP_USER_FILTER
-              value: {{ .Values.ldap.user_filter | quote }}
-            - name: LDAP_ADMIN_FILTER
-              value: {{ .Values.ldap.admin_filter | quote }}
-            - name: LDAP_ID_ATTRIBUTE
-              value: {{ .Values.ldap.id_attribute | quote }}
-            - name: LDAP_NAME_ATTRIBUTE
-              value: {{ .Values.ldap.name_attribute | quote }}
-            - name: LDAP_MAIL_ATTRIBUTE
-              value: {{ .Values.ldap.mail_attribute | quote }}  
-            {{- end }}
-
-            {{- if .Values.oidc.enabled }}
-            - name: OIDC_AUTH_ENABLED
-              value: {{ .Values.oidc.enabled | quote }}
-            - name: OIDC_SIGNUP_ENABLED
-              value: {{ .Values.oidc.signupEnabled | quote }}
-            - name: OIDC_PROVIDER_NAME
-              value: {{ .Values.oidc.providerName | quote }}
-            - name: OIDC_CONFIGURATION_URL
-              value: {{ .Values.oidc.configurationUrl | quote }}
-            - name: OIDC_CLIENT_ID
-              value: {{ .Values.oidc.clientId | quote }}
-            - name: OIDC_ADMIN_GROUP
-              value: {{ .Values.oidc.adminGroup | quote }}
-            - name: OIDC_USER_GROUP
-              value: {{ .Values.oidc.userGroup | quote }}
-            - name: OIDC_AUTO_REDIRECT
-              value: {{ .Values.oidc.autoRedirect | quote }}
-            - name: OIDC_CLIENT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: mealie-oidc
-                  key: OIDC_CLIENT_SECRET          
-            {{- end }}
-
-            {{- if .Values.openai.enabled  }}
-            - name: BASE_URL
-              value: {{ .Values.openai.baseUrl | quote }}
-            - name: OPENAI_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: mealie-openai
-                  key: OPENAI_API_KEY       
-            - name: OPENAI_ENABLE_IMAGE_SERVICES
-              value: {{ .Values.openai.enable_image_services | quote }}      
-            - name: OPENAI_MODEL
-              value: {{ .Values.openai.model | quote }}
-            - name: OPENAI_SEND_DATABASE_DATA
-              value: {{ .Values.openai.send_database_data | quote }}
-            - name: OPENAI_REQUEST_TIMEOUT
-              value: {{ .Values.openai.request_timeout | quote }} 
-            - name: OPENAI_WORKERS
-              value: {{ .Values.openai.workers | quote }}
-            {{- end }}
-
-            # Database secrets / runtime values
             {{- if .Values.postgresql.enabled }}
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.postgresql.auth.existingSecret | quote }}
                   key: {{ .Values.postgresql.auth.secretKeys.userPasswordKey | default "password" | quote }}
-
-            - name: POSTGRES_SERVER
-              value: {{ printf "%s-postgresql" .Release.Name | quote }}
             {{- end }}
 
-            # Mail secrets
             {{- if .Values.smtp.enabled }}
-            - name: SMTP_HOST
-              valueFrom:
-                secretKeyRef:
-                  name: mealie-smtp-secret
-                  key: SMTP_HOST    
-            - name: SMTP_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: mealie-smtp-secret
-                  key: SMTP_PASSWORD
             - name: SMTP_USER
               valueFrom:
                 secretKeyRef:
-                  name: mealie-smtp-secret
-                  key: SMTP_USER
-            {{- end }}           
+                  name: {{ .Values.smtp.existingSecret | default (printf "%s-smtp" .Release.Name) | quote }}
+                  key: {{ .Values.smtp.secretKeys.userKey | default "SMTP_USER" | quote }}
 
-          volumeMounts: 
-            - mountPath: /app/data 
-            # The images from the recipes are stored here.
+            - name: SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.smtp.existingSecret | default (printf "%s-smtp" .Release.Name) | quote }}
+                  key: {{ .Values.smtp.secretKeys.passwordKey | default "SMTP_PASSWORD" | quote }}
+            {{- end }}
+
+            {{- if .Values.ldap.enabled }}
+            - name: LDAP_QUERY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.ldap.existingSecret | default (printf "%s-ldap" .Release.Name) | quote }}
+                  key: {{ .Values.ldap.secretKeys.queryPasswordKey | default "LDAP_QUERY_PASSWORD" | quote }}
+            {{- end }}
+
+            {{- if .Values.oidc.enabled }}
+            - name: OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.oidc.existingSecret | default (printf "%s-oidc" .Release.Name) | quote }}
+                  key: {{ .Values.oidc.secretKeys.clientSecretKey | default "OIDC_CLIENT_SECRET" | quote }}
+            {{- end }}
+
+            {{- if .Values.openai.enabled }}
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.openai.existingSecret | default (printf "%s-openai" .Release.Name) | quote }}
+                  key: {{ .Values.openai.secretKeys.apiKeyKey | default "OPENAI_API_KEY" | quote }}
+            {{- end }}
+
+          volumeMounts:
+            - mountPath: /app/data
               name: mealie-api-data-{{ .Release.Namespace }}
+
       volumes:
         - name: mealie-api-data-{{ .Release.Namespace }}
           persistentVolumeClaim:

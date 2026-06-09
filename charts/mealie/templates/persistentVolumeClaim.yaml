@@ -30,7 +30,7 @@ spec:
       storage: {{ .Values.storage.size }}
 
 ---
-{{- if .Values.postgresql.upgrade.temp_storage }}
+{{- if .Values.postgresql.upgrade.tempStorage }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:

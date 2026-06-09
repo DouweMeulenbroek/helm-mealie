@@ -9,7 +9,7 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-    - host: {{ .Values.config.base_url }} # Change this to your domain
+    - host: {{ .Values.config.baseUrl }} # Change this to your domain
       http:
         paths:
           - path: /  # Path to route traffic to
