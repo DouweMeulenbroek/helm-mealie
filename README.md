@@ -105,6 +105,17 @@ Certificates: Certmanager
 # Troubleshooting
 If the deployment of the statefulset is stuck 'missing pvc' you can rerun the upgrade command and it should then fix the missing PVC.
 
+## AI Providers
+
+Mealie AI Providers are configured from the Mealie UI.
+
+After deployment:
+
+Settings → Group Settings → AI Providers
+
+Create your OpenAI/Ollama/OpenRouter provider there.
+
+This Helm chart does not create AI providers automatically.
 
 # Restore a backup from the UI with Postgresql
 1. Connect to the database as the Postgres user with

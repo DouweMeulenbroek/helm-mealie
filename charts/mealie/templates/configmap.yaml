@@ -83,10 +83,5 @@ data:
   {{- end }}
 
   {{- if .Values.openai.enabled }}
-  OPENAI_BASE_URL: {{ .Values.openai.baseUrl | quote }}
-  OPENAI_MODEL: {{ .Values.openai.model | quote }}
-  OPENAI_ENABLE_IMAGE_SERVICES: {{ .Values.openai.enableImageServices | quote }}
-  OPENAI_WORKERS: {{ .Values.openai.workers | quote }}
-  OPENAI_SEND_DATABASE_DATA: {{ .Values.openai.sendDatabaseData | quote }}
-  OPENAI_REQUEST_TIMEOUT: {{ .Values.openai.requestTimeout | quote }}
+  OPENAI_CUSTOM_PROMPT_DIR: {{ .Values.openai.openaiCustomPromptDir | quote }}
   {{- end }}

@@ -84,14 +84,6 @@ spec:
                   key: {{ .Values.oidc.secretKeys.clientSecret | default "OIDC_CLIENT_SECRET" | quote }}
             {{- end }}
 
-            {{- if .Values.openai.enabled }}
-            - name: OPENAI_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.openai.existingSecret | default (printf "%s-openai" .Release.Name) | quote }}
-                  key: {{ .Values.openai.secretKeys.apiKey | default "OPENAI_API_KEY" | quote }}
-            {{- end }}
-
           volumeMounts:
             - mountPath: /app/data
               name: mealie-api-data-{{ .Release.Namespace }}
