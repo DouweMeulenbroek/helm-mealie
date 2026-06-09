@@ -155,16 +155,25 @@ ldap:
 oidc:
   enabled: false
   signupEnabled: false
-  providerName: your-provider-here
   configurationUrl: https://authentik.example.com/application/o/mealie/.well-known/openid-configuration
   clientId: mealie
   existingSecret: "" #If you have already created a secret with your OIDC client secret, put the name of that secret here. If not, the chart will create a new secret with the name "mealie-oidc" and the key "OIDC_CLIENT_SECRET".
   clientSecret: ""
   secretKeys:
     clientSecret: OIDC_CLIENT_SECRET
-  autoRedirect: false
   userGroup: mealie-users
-  adminGroup: mealie-admins
+  adminGroup: mealie-admins  
+  autoRedirect: false
+  providerName: your-provider-here
+  oidcRememberMe: False
+  signingAlgoritm: "RS256"
+  userClaim: "email"  #This is the claim which Mealie will use to look up an existing user by (e.g. "email", "preferred_username")
+  nameClaim: "name"   	#This is the claim which Mealie will use for the users Full Name
+  groupsClaim: "groups" #Optional if not use OIDC_USER_GROUP or OIDC_ADMIN_GROUP
+  scopesOverride: ""
+  tlsCacertfile: "" # e.g. /path/to/ca/cert
+  clientTimeout: default #If set to None, disables timeout entierly.
+
 
 
 

@@ -61,12 +61,30 @@ data:
   {{- if .Values.oidc.enabled }}
   OIDC_AUTH_ENABLED: {{ .Values.oidc.enabled | quote }}
   OIDC_SIGNUP_ENABLED: {{ .Values.oidc.signupEnabled | quote }}
-  OIDC_PROVIDER_NAME: {{ .Values.oidc.providerName | quote }}
-  OIDC_CONFIGURATION_URL: {{ .Values.oidc.configurationUrl | quote }}
   OIDC_CLIENT_ID: {{ .Values.oidc.clientId | quote }}
-  OIDC_AUTO_REDIRECT: {{ .Values.oidc.autoRedirect | quote }}
   OIDC_USER_GROUP: {{ .Values.oidc.userGroup | quote }}
   OIDC_ADMIN_GROUP: {{ .Values.oidc.adminGroup | quote }}
+  OIDC_USER_GROUP: {{ .Values.oidc.userGroup | quote }}
+  OIDC_ADMIN_GROUP: {{ .Values.oidc.adminGroup | quote }}
+  OIDC_AUTO_REDIRECT: {{ .Values.oidc.autoRedirect | quote }}
+  OIDC_PROVIDER_NAME: {{ .Values.oidc.providerName | quote }}
+  OIDC_REMEMBER_ME: {{ .Values.oidc.oidcRememberMe | quote }}
+  OIDC_SIGNING_ALGORITHM: {{ .Values.oidc.signingAlgoritm | quote }}
+  OIDC_USER_CLAIM: {{ .Values.oidc.userClaim | quote }}
+  OIDC_NAME_CLAIM: {{ .Values.oidc.nameClaim | quote }}
+  OIDC_GROUPS_CLAIM: {{ .Values.oidc.groupsClaim | quote }}
+  OIDC_SCOPE_OVERRIDE: {{ .Values.oidc.scopeOverride | quote }}
+  OIDC_CLIENT_TIMEOUT: {{ .Values.oidc.clientTimeout | quote }}
+   {{- end }}
+
+  {{- if and .Values.smtp.enabled (not .Values.smtp.existingSecret) }}
+  {{- end }}
+
+  OIDC_PROVIDER_NAME: {{ .Values.oidc.providerName | quote }}
+  OIDC_CONFIGURATION_URL: {{ .Values.oidc.configurationUrl | quote }}
+
+  OIDC_AUTO_REDIRECT: {{ .Values.oidc.autoRedirect | quote }}
+
   {{- end }}
 
   {{- if .Values.openai.enabled }}
