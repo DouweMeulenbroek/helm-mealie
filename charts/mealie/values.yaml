@@ -69,7 +69,7 @@ config:  # Backend configuration
   defaultHousehold: "" #Default is Family
   baseUrl: https://YOUR-AWESOME-DOMAIN-HERE #Must include https://
   tokenTime: ""         #Default is 48
-  TZ: ""                #Default is "Europe/Amsterdam" 
+  tz: ""                #Default is "Europe/Amsterdam" 
   allowSignups: ""      #Default is False
   allowPasswordLogin: "" #Default is true
   uvicornWorkers: ""   #Default is 1
