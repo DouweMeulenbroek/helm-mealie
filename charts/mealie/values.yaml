@@ -172,7 +172,7 @@ oidc:
   groupsClaim: "groups" #Optional if not use OIDC_USER_GROUP or OIDC_ADMIN_GROUP
   scopesOverride: ""
   tlsCacertfile: "" # e.g. /path/to/ca/cert
-  clientTimeout: default #If set to None, disables timeout entierly.
+  clientTimeout: "" #If set to None, disables timeout entirely. Default is 30 seconds.
 
 
 

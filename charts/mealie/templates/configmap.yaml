@@ -79,7 +79,7 @@ data:
   OIDC_NAME_CLAIM: {{ .Values.oidc.nameClaim | quote }}
   OIDC_GROUPS_CLAIM: {{ .Values.oidc.groupsClaim | quote }}
   OIDC_SCOPE_OVERRIDE: {{ .Values.oidc.scopeOverride | quote }}
-  OIDC_CLIENT_TIMEOUT: {{ .Values.oidc.clientTimeout | quote }}
+  OIDC_CLIENT_TIMEOUT: {{ .Values.oidc.clientTimeout | default 30 |quote }}
   {{- end }}
 
   {{- if .Values.openai.enabled }}
