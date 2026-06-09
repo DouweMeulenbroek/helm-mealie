@@ -2,7 +2,7 @@ appName: mealie-webservice
 ingress:
   traefik:
     enabled: true
-    host: YOUR-FQDN #This should be your FQDN
+    host: YOUR-FQDN #This should be your FQDN w/o http:// or https://
     ingressClass: traefik #Change this to match your IngressClass
     middleware:
       auth:
@@ -65,16 +65,15 @@ replicaCount: 1
 config:  # Backend configuration
   puid: ""              #Default is 911
   pgid: ""              #Default is 911
-  defaultGroup: "Cook-a-YOU" #Default is Home
-  defaultHousehold: "Cook-a-YOU" #Default is Family
-  baseUrl: https://YOUR-AWESOME-DOMAIN-HERE # Do include http or https.
-  tokenTime: ""        #Default is 48
+  defaultGroup: "" #Default is Home
+  defaultHousehold: "" #Default is Family
+  baseUrl: https://YOUR-AWESOME-DOMAIN-HERE #Must include https://
+  tokenTime: ""         #Default is 48
   TZ: ""                #Default is "Europe/Amsterdam" 
-  allowSignups: ""     #Default is False
+  allowSignups: ""      #Default is False
   allowPasswordLogin: "" #Default is true
   uvicornWorkers: ""   #Default is 1
   apiDocs: ""          #Default is False
-  
 
   # Logging (Uncomment if needed)
   # log_config_override: 
