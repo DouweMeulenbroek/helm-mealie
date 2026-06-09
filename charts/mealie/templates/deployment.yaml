@@ -59,7 +59,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.smtp.existingSecret | default (printf "%s-smtp" .Release.Name) | quote }}
-                  key: {{ .Values.smtp.secretKeys.userKey | default "SMTP_USER" | quote }}
+                  key: {{ .Values.smtp.secretKeys.user | default "SMTP_USER" | quote }}
 
             - name: SMTP_PASSWORD
               valueFrom:
@@ -73,7 +73,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.ldap.existingSecret | default (printf "%s-ldap" .Release.Name) | quote }}
-                  key: {{ .Values.ldap.secretKeys.queryPasswordKey | default "LDAP_QUERY_PASSWORD" | quote }}
+                  key: {{ .Values.ldap.secretKeys.queryPassword | default "LDAP_QUERY_PASSWORD" | quote }}
             {{- end }}
 
             {{- if .Values.oidc.enabled }}
@@ -81,7 +81,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.oidc.existingSecret | default (printf "%s-oidc" .Release.Name) | quote }}
-                  key: {{ .Values.oidc.secretKeys.clientSecretKey | default "OIDC_CLIENT_SECRET" | quote }}
+                  key: {{ .Values.oidc.secretKeys.clientSecret | default "OIDC_CLIENT_SECRET" | quote }}
             {{- end }}
 
             {{- if .Values.openai.enabled }}
@@ -89,7 +89,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.openai.existingSecret | default (printf "%s-openai" .Release.Name) | quote }}
-                  key: {{ .Values.openai.secretKeys.apiKeyKey | default "OPENAI_API_KEY" | quote }}
+                  key: {{ .Values.openai.secretKeys.apiKey | default "OPENAI_API_KEY" | quote }}
             {{- end }}
 
           volumeMounts:

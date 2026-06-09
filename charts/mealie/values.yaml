@@ -100,9 +100,9 @@ postgresql:
     existingSecret: "mealie-postgres-secret"
 
     secretKeys:
-      adminPasswordKey: "postgresPassword"
-      userPasswordKey: "password"
-      replicationPasswordKey: ""
+      adminPassword: "postgresPassword"
+      userPassword: "password"
+      replicationPassword: ""
 
   passwordUpdateJob:
     enabled: false  
@@ -122,8 +122,8 @@ smtp:
   user: ""
   existingSecret: "" #If you have already created a secret with your SMTP credentials, put the name of that secret here. If not, the chart will create a new secret with the name "mealie-smtp-secret" and the keys "SMTP_USER" and "SMTP_PASSWORD".
   secretKeys:
-    userKey: SMTP_USER
-    passwordKey: SMTP_PASSWORD
+    user: SMTP_USER
+    password: SMTP_PASSWORD
 
   uvicorn_workers: 1
  
@@ -140,13 +140,13 @@ ldap:
   serverUrl: "ldap.example.com"
   tlsInsecure: false 
   tlsCaCertFile: "/path/to/ca.crt"
-  enableStarTtls: "None"
-  baseDN: "cn=users,dc=xx,dc=yy,dc=de"
+  enableStartTls: "None"
+  baseDn: "cn=users,dc=xx,dc=yy,dc=de"
   queryBind: "cn=admin,cn=users,dc=example,dc=com"
   existingSecret: "" #If you have already created a secret with your LDAP query password, put the name of that secret here. If not, the chart will create a new secret with the name "mealie-ldap" and the key "LDAP_QUERY_PASSWORD".
   queryPassword: ""
   secretKeys:
-    queryPasswordKey: LDAP_QUERY_PASSWORD
+    queryPassword: LDAP_QUERY_PASSWORD
   userFilter: "memberof=cn=mealie_user,dc=example,dc=com"
   adminFilter: "memberof=cn=admins,dc=example,dc=com"
   idAttribute: "uid"
@@ -162,7 +162,7 @@ oidc:
   existingSecret: "" #If you have already created a secret with your OIDC client secret, put the name of that secret here. If not, the chart will create a new secret with the name "mealie-oidc" and the key "OIDC_CLIENT_SECRET".
   clientSecret: ""
   secretKeys:
-    clientSecretKey: OIDC_CLIENT_SECRET
+    clientSecret: OIDC_CLIENT_SECRET
   autoRedirect: false
   userGroup: mealie-users
   adminGroup: mealie-admins
@@ -180,5 +180,5 @@ openai:
   apiKey: ""
   existingSecret: "" #If you have already created a secret with your OpenAI API key, put the name of that secret here. If not, the chart will create a new secret with the name "mealie-openai" and the key "OPENAI_API_KEY".
   secretKeys:
-    apiKeyKey: "OPENAI_API_KEY"
+    apiKey: "OPENAI_API_KEY"
 
