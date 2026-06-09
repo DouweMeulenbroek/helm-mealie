@@ -1,0 +1,87 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mealie-configmap
+  namespace: {{ .Release.Namespace }}
+data:
+  PUID: {{ .Values.config.puid | default 911 | quote }}
+  PGID: {{ .Values.config.pgid | default 911 | quote }}
+  DEFAULT_GROUP: {{ .Values.config.defaultGroup | default "Home" | quote }}
+  DEFAULT_HOUSEHOLD: {{ .Values.config.defaultHousehold | default "Family" | quote }}
+  BASE_URL: {{ .Values.config.baseUrl | quote }}
+  TOKEN_TIME: {{ .Values.config.tokenTime | default 48 | quote }}
+  API_DOCS: {{ .Values.config.apiDocs | default "false" | quote }}
+  TZ: {{ .Values.config.tz | default "Europe/Amsterdam" | quote }}
+  ALLOW_SIGNUPS: {{ .Values.config.allowSignups | default "false" | quote }}
+  ALLOW_PASSWORD_LOGIN: {{ .Values.config.allowPasswordLogin | default "true" | quote }}
+  LOG_LEVEL: {{ .Values.config.logLevel | default "info" | quote }}
+  TRUSTED_PROXIES: "*"
+  FORWARDED_ALLOW_IPS: "*"
+  UVICORN_WORKERS: {{ .Values.config.uvicornWorkers | default "1" | quote }}
+
+  SECURITY_MAX_LOGIN_ATTEMPTS: {{ .Values.config.security.maxLoginAttempts | default "5" | quote }}
+  SECURITY_USER_LOCKOUT_TIME: {{ .Values.config.security.userLockoutTime | default "24" | quote }}
+
+  {{- if .Values.postgresql.enabled }}
+  DB_ENGINE: {{ .Values.postgresql.dbEngine | quote }}
+  POSTGRES_USER: {{ .Values.postgresql.auth.username | quote }}
+  POSTGRES_PORT: {{ .Values.postgresql.auth.port | quote }}
+  POSTGRES_DB: {{ .Values.postgresql.auth.database | quote }}
+  POSTGRES_SERVER: {{ .Values.postgresql.host | default (printf "%s-postgresql" .Release.Name) | quote }}
+  {{- end }}
+
+  {{- if .Values.smtp.enabled }}
+  SMTP_HOST: {{ .Values.smtp.host | quote }}
+  SMTP_PORT: {{ .Values.smtp.port | quote }}
+  SMTP_FROM_NAME: {{ .Values.smtp.fromName | quote }}
+  SMTP_AUTH_STRATEGY: {{ .Values.smtp.authStrategy | quote }}
+  SMTP_FROM_EMAIL: {{ .Values.smtp.fromEmail | quote }}
+  {{- end }}
+
+
+  {{- if and .Values.smtp.enabled (not .Values.smtp.existingSecret) }}
+  {{- end }}
+
+  {{- if .Values.tls.enabled }}
+  TLS_CERTIFICATE_PATH: {{ .Values.tls.certificatePath | quote }}
+  TLS_PRIVATE_KEY_PATH: {{ .Values.tls.privateKeyPath | quote }}
+  {{- end }}
+
+  {{- if .Values.ldap.enabled }}
+  LDAP_AUTH_ENABLED: {{ .Values.ldap.authEnabled | quote }}
+  LDAP_SERVER_URL: {{ .Values.ldap.serverUrl | quote }}
+  LDAP_TLS_INSECURE: {{ .Values.ldap.tlsInsecure | quote }}
+  LDAP_TLS_CACERTFILE: {{ .Values.ldap.tlsCaCertFile | quote }}
+  LDAP_ENABLE_STARTTLS: {{ .Values.ldap.enableStartTls | quote }}
+  LDAP_BASE_DN: {{ .Values.ldap.baseDn | quote }}
+  LDAP_QUERY_BIND: {{ .Values.ldap.queryBind | quote }}
+  LDAP_USER_FILTER: {{ .Values.ldap.userFilter | quote }}
+  LDAP_ADMIN_FILTER: {{ .Values.ldap.adminFilter | quote }}
+  LDAP_ID_ATTRIBUTE: {{ .Values.ldap.idAttribute | quote }}
+  LDAP_NAME_ATTRIBUTE: {{ .Values.ldap.nameAttribute | quote }}
+  LDAP_MAIL_ATTRIBUTE: {{ .Values.ldap.mailAttribute | quote }}
+  {{- end }}
+
+  {{- if .Values.oidc.enabled }}
+  OIDC_AUTH_ENABLED: {{ .Values.oidc.enabled | quote }}
+  OIDC_SIGNUP_ENABLED: {{ .Values.oidc.signupEnabled | quote }}
+  OIDC_CONFIGURATION_URL: {{ .Values.oidc.configurationUrl | quote }}
+  OIDC_CLIENT_ID: {{ .Values.oidc.clientId | quote }}
+  OIDC_USER_GROUP: {{ .Values.oidc.userGroup | quote }}
+  OIDC_ADMIN_GROUP: {{ .Values.oidc.adminGroup | quote }}
+  OIDC_USER_GROUP: {{ .Values.oidc.userGroup | quote }}
+  OIDC_ADMIN_GROUP: {{ .Values.oidc.adminGroup | quote }}
+  OIDC_AUTO_REDIRECT: {{ .Values.oidc.autoRedirect | quote }}
+  OIDC_PROVIDER_NAME: {{ .Values.oidc.providerName | quote }}
+  OIDC_REMEMBER_ME: {{ .Values.oidc.oidcRememberMe | quote }}
+  OIDC_SIGNING_ALGORITHM: {{ .Values.oidc.signingAlgoritm | quote }}
+  OIDC_USER_CLAIM: {{ .Values.oidc.userClaim | quote }}
+  OIDC_NAME_CLAIM: {{ .Values.oidc.nameClaim | quote }}
+  OIDC_GROUPS_CLAIM: {{ .Values.oidc.groupsClaim | quote }}
+  OIDC_SCOPE_OVERRIDE: {{ .Values.oidc.scopeOverride | quote }}
+  OIDC_CLIENT_TIMEOUT: {{ .Values.oidc.clientTimeout | default 30 |quote }}
+  {{- end }}
+
+  {{- if .Values.openai.enabled }}
+  OPENAI_CUSTOM_PROMPT_DIR: {{ .Values.openai.openaiCustomPromptDir | quote }}
+  {{- end }}

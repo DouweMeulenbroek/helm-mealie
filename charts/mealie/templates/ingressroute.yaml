@@ -1,0 +1,70 @@
+---
+{{- if and .Values.ingress.traefik.enabled (not .Values.ingress.nginx.enabled ) }}
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ .Release.Name }}-ingress
+  namespace: {{ .Release.namespace }}
+    
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`{{ .Values.ingress.traefik.host }}`)
+      kind: Rule
+      services:
+        - name: {{ .Values.service.name | quote }}
+          port: {{ .Values.service.port }}
+      middlewares:
+        - name: default-headers
+          namespace: {{ .Release.namespace }}
+
+    - match: "Host(`{{ .Values.ingress.traefik.host }}`) && PathPrefix(`/admin`)"
+      kind: Rule
+      services:
+        - name: {{ .Values.service.name | quote }}
+          port: {{ .Values.service.port }}
+      middlewares:
+        - name: mealie-adminpage
+          namespace: {{ .Release.namespace }}
+        - name: default-headers
+          namespace: {{ .Release.namespace }}
+
+    - match:  "Host(`{{ .Values.ingress.traefik.host }}`) && PathPrefix(`/docs`)"
+      kind: Rule
+      services:
+        - name: {{ .Values.service.name | quote }}
+          port: {{ .Values.service.port }}
+      middlewares:
+        - name: mealie-adminpage
+          namespace: {{ .Release.namespace }}        
+        - name: default-headers
+          namespace: {{ .Release.namespace }}        
+
+#For security reasons
+    - match: "Host(`{{ .Values.ingress.traefik.host }}`) && PathPrefix(`/api/recipes/create/url`)"
+      kind: Rule
+      services:
+        - name: {{ .Values.service.name | quote }}
+          port: {{ .Values.service.port }}
+      middlewares:
+        - name: mealie-ratelimit
+          namespace: {{ .Release.namespace }}        
+        - name: default-headers
+          namespace: {{ .Release.namespace }}        
+
+#For security reasons
+    - match: "Host(`{{ .Values.ingress.traefik.host }}`) && PathPrefix(`/api/recipes/{id}/image`)"
+      kind: Rule
+      services:
+        - name: {{ .Values.service.name | quote }}
+          port: {{ .Values.service.port }}
+      middlewares:
+        - name: mealie-ratelimit
+          namespace: {{ .Release.namespace }} 
+  tls:
+    secretName: {{ .Values.certificate.secretName | quote }}
+    options:
+      name: {{ .Values.ingress.traefik.tls.options | quote}}
+      namespace: {{ .Release.Namespace }}
+{{- end }}

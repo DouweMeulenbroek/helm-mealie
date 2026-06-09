@@ -1,0 +1,192 @@
+appName: mealie-webservice
+ingress:
+  traefik:
+    enabled: true
+    host: YOUR-FQDN #This should be your FQDN w/o http:// or https://
+    ingressClass: traefik #Change this to match your IngressClass
+    middleware:
+      auth:
+        enabled: true
+        credentials:
+          username: "" #Default is "admin"
+          password: "" # If not set it will be generated 
+    tls:
+      secret: YOUR-SUPER-SECRET-CERTIFICATE-tls 
+      #Certificate secret managed by Certmanager
+      #This name must be the same as the .Values.certificate.secretName in certificate.yaml
+      options: tls-strong
+  nginx:
+    enabled: false #Set this to true if you don't use Traefik, set the other to false
+    ingressClass: Nginx
+
+certificate:
+  enabled: True #Set to True if you want to use Certmanager to manage your TLS certificates, set to false if you want to use your own certificates or if you don't want TLS
+  name: YOUR-MEALIE-DOMAIN # For example mealie-example-com
+  secretName: YOUR-MEALIE-DOMAIN-tls # For example mealie-example-com-tls
+  issuerRef:
+    name: YOUR-CLUSTER-ISSUER-HERE
+    kind: ClusterIssuer
+  commonName: YOUR-MEALIE-DOMAIN # For example mealie-example-com
+  dnsName:
+    - YOUR-MEALIE-DOMAIN #This must be the same as config.baseUrl.
+
+service:
+  name: "mealie-frontend"
+  type: ClusterIP
+  portName: http
+  protocol: TCP
+  port: 80
+  targetPort: 9000
+
+storage:
+  persistentVolumeReclaimPolicy: "Retain"
+  #Retain, Delete or Recyle
+  storageProvider: "local-storage"
+  #Either longhorn or local storage
+  size: "10Gi"
+  storageClassName: "local-path"
+  hostPath:  "/mealie"
+  #Either longhorn or default or what your personal storagClassName is
+  accessModes: "ReadWriteOnce"
+#Do note that hostPath does not support ReadWriteMany and defaults to ReadWriteOnce
+
+container:
+  limits:
+    enabled: false
+    memory: "2048Mi"
+    cpu: "1000m"
+  port: 9000
+
+image:
+  repository: "ghcr.io/mealie-recipes/mealie"
+  tag: "v3.19.2"
+
+replicaCount: 1
+config:  # Backend configuration
+  puid: ""              #Default is 911
+  pgid: ""              #Default is 911
+  defaultGroup: "" #Default is Home
+  defaultHousehold: "" #Default is Family
+  baseUrl: https://YOUR-AWESOME-DOMAIN-HERE #Must include https://
+  tokenTime: ""         #Default is 48
+  tz: ""                #Default is "Europe/Amsterdam" 
+  allowSignups: ""      #Default is False
+  allowPasswordLogin: "" #Default is true
+  uvicornWorkers: ""   #Default is 1
+  apiDocs: ""          #Default is False
+
+  # Logging (Uncomment if needed)
+  # logConfigOverride: 
+  logLevel: info #Either info or debug
+
+  security:
+    maxLoginAttempts: ""  #Default is 5
+    userLockoutTime: ""   #Default is 24
+
+postgresql:
+  enabled: false        #Enable if you want to use Postgresql as your database instead of SQLlite
+  dbEngine: "postgres"
+  auth:
+    username: "mealie"
+    database: "mealiedb"
+    port: "5432"
+
+    # Required when postgresql.enabled=true and existingSecret is empty.
+    # Do not auto-generate these for persistent PVC setups.
+    password: ""
+    postgresPassword: ""
+    # Recommended: create/manage this secret yourself, or let the chart create it from explicit values.
+    existingSecret: "mealie-postgres-secret"
+    secretKeys:
+      adminPassword: "postgresPassword"
+      userPassword: "password"
+      replicationPassword: ""
+
+  passwordUpdateJob:
+    enabled: false  
+  upgrade:
+    database: false
+    tempStorage: false
+    cleanupReady: false
+
+# Email configuration
+smtp:
+  enabled: false
+  host: ""
+  port: 587
+  fromName: ""
+  authStrategy: "TLS"
+  fromEmail: ""
+  user: ""
+  password: ""
+  existingSecret: "" # If set, the chart uses this existing Secret. If empty and smtp.user/password are set, the chart creates one.
+  secretKeys:
+    user: SMTP_USER
+    password: SMTP_PASSWORD
+
+  uvicorn_workers: 1
+ 
+tls: #Use this only when mealie is run without a webserver or reverse proxy.
+#With this helmchart TLS is handled by the Traefik ingressRoute or NGINX.
+  enabled: false
+  certificatePath: "None"
+  privateKeyPath: "None"
+
+ldap:
+#This can be used to centralize user management instead of relying on Mealie's local user management.
+  enabled: false
+  authEnabled: false 
+  serverUrl: "ldap.example.com"
+  tlsInsecure: false 
+  tlsCaCertFile: "/path/to/ca.crt"
+  enableStartTls: "None"
+  baseDn: "cn=users,dc=xx,dc=yy,dc=de"
+  queryBind: "cn=admin,cn=users,dc=example,dc=com"
+  existingSecret: "" #If you have already created a secret with your LDAP query password, put the name of that secret here. If not, the chart will create a new secret with the name "mealie-ldap" and the key "LDAP_QUERY_PASSWORD".
+  queryPassword: ""
+  secretKeys:
+    queryPassword: LDAP_QUERY_PASSWORD
+  userFilter: "memberof=cn=mealie_user,dc=example,dc=com"
+  adminFilter: "memberof=cn=admins,dc=example,dc=com"
+  idAttribute: "uid"
+  nameAttribute: "name"
+  mailAttribute: "mail"
+
+oidc:
+  enabled: false
+  signupEnabled: false
+  configurationUrl: https://authentik.example.com/application/o/mealie/.well-known/openid-configuration
+  clientId: mealie
+  existingSecret: "" #If you have already created a secret with your OIDC client secret, put the name of that secret here. If not, the chart will create a new secret with the name "mealie-oidc" and the key "OIDC_CLIENT_SECRET".
+  clientSecret: ""
+  secretKeys:
+    clientSecret: OIDC_CLIENT_SECRET
+  userGroup: mealie-users
+  adminGroup: mealie-admins  
+  autoRedirect: false
+  providerName: your-provider-here
+  oidcRememberMe: False
+  signingAlgoritm: "RS256"
+  userClaim: "email"  #This is the claim which Mealie will use to look up an existing user by (e.g. "email", "preferred_username")
+  nameClaim: "name"   	#This is the claim which Mealie will use for the users Full Name
+  groupsClaim: "groups" #Optional if not use OIDC_USER_GROUP or OIDC_ADMIN_GROUP
+  scopesOverride: ""
+  tlsCacertfile: "" # e.g. /path/to/ca/cert
+  clientTimeout: "" #If set to None, disables timeout entirely. Default is 30 seconds.
+
+
+
+
+openai:
+  enabled: false
+  baseUrl: "https://api.openai.com/v1"
+  model: "gpt-5"  
+  enableImageServices: true 
+  sendDatabaseData: true
+  requestTimeout: 60
+  workers: 2
+  apiKey: ""
+  existingSecret: "" #If you have already created a secret with your OpenAI API key, put the name of that secret here. If not, the chart will create a new secret with the name "mealie-openai" and the key "OPENAI_API_KEY".
+  secretKeys:
+    apiKey: "OPENAI_API_KEY"
+

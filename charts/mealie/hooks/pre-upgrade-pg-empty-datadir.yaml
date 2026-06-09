@@ -1,0 +1,34 @@
+{{- if .Values.postgresql.upgrade.database }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ .Release.Name }}-pg-empty-datadir"
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": pre-upgrade
+    "helm.sh/hook-weight": "5" # After pg-dump
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
+spec:
+  template:
+    metadata:
+      name: "{{ .Release.Name }}-pg-empty-datadir"
+    spec:
+      serviceAccountName: pg-dump-restore
+      restartPolicy: Never
+      containers:
+        - name: empty-datadir
+          image: busybox
+          command: ["sh", "-c"]
+          args:
+            - |
+              echo "🧹 Cleaning PostgreSQL data directory..."
+              rm -rf /bitnami/postgresql/data/*
+              echo "✅ Cleanup complete"
+          volumeMounts:
+            - name: pgdata
+              mountPath: /bitnami/postgresql/data
+      volumes:
+        - name: pgdata
+          persistentVolumeClaim:
+            claimName: data-{{ .Release.Name }}-postgresql-0
+{{- end }}
