@@ -76,7 +76,7 @@ config:  # Backend configuration
   apiDocs: ""          #Default is False
 
   # Logging (Uncomment if needed)
-  # log_config_override: 
+  # logConfigOverride: 
   logLevel: info #Either info or debug
 
   security:
@@ -108,8 +108,8 @@ postgresql:
     enabled: false  
   upgrade:
     database: false
-    temp_storage: false
-    cleanup_ready: false
+    tempStorage: false
+    cleanupReady: false
 
 # Email configuration
 smtp:
@@ -118,7 +118,7 @@ smtp:
   port: 587
   fromName: ""
   authStrategy: "TLS"
-  from_email: ""
+  fromEmail: ""
   user: ""
   existingSecret: "" #If you have already created a secret with your SMTP credentials, put the name of that secret here. If not, the chart will create a new secret with the name "mealie-smtp-secret" and the keys "SMTP_USER" and "SMTP_PASSWORD".
   secretKeys:

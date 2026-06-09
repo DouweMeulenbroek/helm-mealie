@@ -59,7 +59,7 @@ This helm chart now supports upgrading the database mayor versions. For this we 
 As always make sure you backup your mealie and postgresql/database PV.
 This upgrade has been tested with chart version 1.0.6 to 1.1.0with postgresql moving from chart 15.5.38 to 16.7.5.
 
-1. Set the following values postgresql.upgrade.temp_storage to `true` and run a helm upgrade.
+1. Set the following values postgresql.upgrade.tempStorage to `true` and run a helm upgrade.
 ```bash
 helm repo update
 helm upgrade mealie helm-mealie/mealie -n {{ your namesapce }}
