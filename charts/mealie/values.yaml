@@ -68,7 +68,7 @@ config:  # Backend configuration
   defaultGroup: "Cook-a-YOU" #Default is Home
   defaultHousehold: "Cook-a-YOU" #Default is Family
   baseUrl: https://YOUR-AWESOME-DOMAIN-HERE # Do include http or https.
-  token_time: ""        #Default is 48
+  tokenTime: ""        #Default is 48
   TZ: ""                #Default is "Europe/Amsterdam" 
   allowSignups: ""     #Default is False
   allowPasswordLogin: "" #Default is true
@@ -136,7 +136,7 @@ tls: #Use this only when mealie is run without a webserver or reverse proxy.
 
 ldap:
 #This can be used to centralize user management instead of relying on Mealie's local user management.
-  enabled: false #default set to false
+  enabled: false
   authEnabled: false 
   serverUrl: "ldap.example.com"
   tlsInsecure: false 
