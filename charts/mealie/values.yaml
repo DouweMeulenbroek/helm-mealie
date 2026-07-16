@@ -21,14 +21,14 @@ ingress:
 
 certificate:
   enabled: True #Set to True if you want to use Certmanager to manage your TLS certificates, set to false if you want to use your own certificates or if you don't want TLS
-  name: YOUR-MEALIE-DOMAIN # For example mealie-example-com
-  secretName: YOUR-MEALIE-DOMAIN-tls # For example mealie-example-com-tls
+  name: your-mealie-domain.example # For example mealie-example-com
+  secretName: your-mealie-domain-tls # For example mealie-example-com-tls
   issuerRef:
     name: YOUR-CLUSTER-ISSUER-HERE
     kind: ClusterIssuer
-  commonName: YOUR-MEALIE-DOMAIN # For example mealie-example-com
+  commonName: your-mealie-domain.example # For example mealie-example-com
   dnsName:
-    - YOUR-MEALIE-DOMAIN #This must be the same as config.baseUrl.
+    - your-mealie-domain.example #This must be the same as config.baseUrl.
 
 service:
   name: "mealie-frontend"
@@ -50,6 +50,16 @@ storage:
   accessModes: "ReadWriteOnce"
 #Do note that hostPath does not support ReadWriteMany and defaults to ReadWriteOnce
 
+#The following section is only required if you want to make use of Longhorn backups based on labels.
+  longhornBackup:
+    # Adds Longhorn recurring-job labels to newly created PVCs.
+    # The matching Longhorn RecurringJob group must already exist.
+    enabled: false
+
+    # Longhorn RecurringJob group assigned to the PVC.
+    recurringJobGroup: critical
+
+
 container:
   limits:
     enabled: false
@@ -67,7 +77,7 @@ config:  # Backend configuration
   pgid: ""              #Default is 911
   defaultGroup: "" #Default is Home
   defaultHousehold: "" #Default is Family
-  baseUrl: https://YOUR-AWESOME-DOMAIN-HERE #Must include https://
+  baseUrl: https://your-awesome-domain-here.example #Must include https://
   tokenTime: ""         #Default is 48
   tz: ""                #Default is "Europe/Amsterdam" 
   allowSignups: ""      #Default is False
@@ -109,6 +119,10 @@ postgresql:
     tempStorage: false
     cleanupReady: false
 
+  primary:
+    persistence:
+      # Additional labels passed to the Bitnami PostgreSQL PVC template.
+      labels: {}
 # Email configuration
 smtp:
   enabled: false
@@ -179,14 +193,5 @@ oidc:
 
 openai:
   enabled: false
-  baseUrl: "https://api.openai.com/v1"
-  model: "gpt-5"  
-  enableImageServices: true 
-  sendDatabaseData: true
-  requestTimeout: 60
-  workers: 2
-  apiKey: ""
-  existingSecret: "" #If you have already created a secret with your OpenAI API key, put the name of that secret here. If not, the chart will create a new secret with the name "mealie-openai" and the key "OPENAI_API_KEY".
-  secretKeys:
-    apiKey: "OPENAI_API_KEY"
+  openaiCustomPromptDir: "" #Path to custom prompt directory, e.g. /prompts
 
