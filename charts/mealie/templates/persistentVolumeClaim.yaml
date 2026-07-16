@@ -1,36 +1,30 @@
-{{- $pvc := lookup "v1" "PersistentVolumeClaim" .Release.Namespace (printf "mealie-api-data-claim-%s" .Release.Namespace) }}
+{{- $claimName := printf "mealie-api-data-claim-%s" .Release.Namespace }}
+{{- $pvc := lookup "v1" "PersistentVolumeClaim" .Release.Namespace $claimName }}
+
 {{- if not $pvc }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   namespace: {{ .Release.Namespace }}
-  name: mealie-api-data-claim-{{ .Release.Namespace }}
+  name: {{ $claimName }}
+  {{- if .Values.storage.longhornBackup.enabled }}
+  labels:
+    recurring-job.longhorn.io/source: "enabled"
+    recurring-job-group.longhorn.io/{{ .Values.storage.longhornBackup.recurringJobGroup }}: "enabled"
+  {{- end }}
 spec:
-  storageClassName: {{ .Values.storage.storageClassName }}
+  storageClassName: {{ .Values.storage.storageClassName | quote }}
   accessModes:
-    - {{ .Values.storage.accessModes }}
+    - {{ .Values.storage.accessModes | quote }}
   resources:
     requests:
-      storage: {{ .Values.storage.size }}
+      storage: {{ .Values.storage.size | quote }}
 {{- else }}
 # PVC already exists, skipping creation
 {{- end }}
 
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  namespace: {{ .Release.Namespace }}
-  name: mealie-api-data-claim-{{ .Release.Namespace }}
-spec:
-  storageClassName: longhorn
-  accessModes:
-    - {{ .Values.storage.accessModes }}
-  resources:
-    requests:
-      storage: {{ .Values.storage.size }}
-
----
 {{- if .Values.postgresql.upgrade.tempStorage }}
+---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -41,5 +35,5 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: {{ .Values.storage.size }}
+      storage: {{ .Values.storage.size | quote }}
 {{- end }}
