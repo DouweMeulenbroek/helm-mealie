@@ -22,7 +22,7 @@ ingress:
 certificate:
   enabled: True #Set to True if you want to use Certmanager to manage your TLS certificates, set to false if you want to use your own certificates or if you don't want TLS
   name: your-mealie-domain.example # For example mealie-example-com
-  secretName: your-mealie-domain-tls # For example mealie-example-com-tls
+  secretName: your-mealie-domain.example-tls # For example mealie-example-com-tls
   issuerRef:
     name: YOUR-CLUSTER-ISSUER-HERE
     kind: ClusterIssuer
@@ -77,7 +77,7 @@ config:  # Backend configuration
   pgid: ""              #Default is 911
   defaultGroup: "" #Default is Home
   defaultHousehold: "" #Default is Family
-  baseUrl: https://your-awesome-domain-here.example #Must include https://
+  baseUrl: https://your-mealie-domain.example #Must include https://
   tokenTime: ""         #Default is 48
   tz: ""                #Default is "Europe/Amsterdam" 
   allowSignups: ""      #Default is False
