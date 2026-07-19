@@ -23,6 +23,8 @@ spec:
 # PVC already exists, skipping creation
 {{- end }}
 
+
+---
 {{- if .Values.postgresql.upgrade.tempStorage }}
 ---
 apiVersion: v1
