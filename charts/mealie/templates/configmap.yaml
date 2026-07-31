@@ -69,8 +69,6 @@ data:
   OIDC_CLIENT_ID: {{ .Values.oidc.clientId | quote }}
   OIDC_USER_GROUP: {{ .Values.oidc.userGroup | quote }}
   OIDC_ADMIN_GROUP: {{ .Values.oidc.adminGroup | quote }}
-  OIDC_USER_GROUP: {{ .Values.oidc.userGroup | quote }}
-  OIDC_ADMIN_GROUP: {{ .Values.oidc.adminGroup | quote }}
   OIDC_AUTO_REDIRECT: {{ .Values.oidc.autoRedirect | quote }}
   OIDC_PROVIDER_NAME: {{ .Values.oidc.providerName | quote }}
   OIDC_REMEMBER_ME: {{ .Values.oidc.oidcRememberMe | quote }}
@@ -78,7 +76,9 @@ data:
   OIDC_USER_CLAIM: {{ .Values.oidc.userClaim | quote }}
   OIDC_NAME_CLAIM: {{ .Values.oidc.nameClaim | quote }}
   OIDC_GROUPS_CLAIM: {{ .Values.oidc.groupsClaim | quote }}
-  OIDC_SCOPE_OVERRIDE: {{ .Values.oidc.scopeOverride | quote }}
+  {{- with .Values.oidc.scopeOverride }}
+  OIDC_SCOPE_OVERRIDE: {{ . | quote }}
+  {{- end }}
   OIDC_CLIENT_TIMEOUT: {{ .Values.oidc.clientTimeout | default 30 |quote }}
   {{- end }}
 
