@@ -1,0 +1,39 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: mealie-adminpage
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Values.appName }}
+spec:
+  basicAuth:
+    secret: mealie-adminpage-auth
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: mealie-ratelimit
+  namespace: {{ .Release.Namespace }}
+spec:
+  rateLimit:
+    average: 100
+    burst: 200
+    period: 1m
+    average: 6
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: default-headers
+  namespace: {{ .Release.Namespace }}
+spec:
+  headers:
+    browserXssFilter: true
+    contentTypeNosniff: true
+    forceSTSHeader: true
+    stsIncludeSubdomains: true
+    stsPreload: false #only when done
+    stsSeconds: 15552000
+    customFrameOptionsValue: SAMEORIGIN
+    customRequestHeaders:
+      X-Forwarded-Proto: https

@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.appName }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.appName }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appName }}
+    spec:
+      {{- if .Values.postgresql.enabled }}
+      initContainers:
+        - name: wait-for-postgres
+          image: postgres:17.10
+          command:
+            - sh
+            - -c
+            - |
+              until pg_isready \
+                -h {{ printf "%s-postgresql" .Release.Name }} \
+                -p {{ .Values.postgresql.auth.port }};
+              do
+                echo "Waiting for PostgreSQL..."
+                sleep 5
+              done
+      {{- end }}
+      containers:
+        - name: {{ .Values.appName }}
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          ports:
+            - containerPort: {{ .Values.container.port }}
+          {{- if .Values.container.limits.enabled }}
+          resources:
+            limits:
+              memory: {{ .Values.container.limits.memory | quote }}
+              cpu: {{ .Values.container.limits.cpu | quote }}
+          {{- end }}
+
+          envFrom:
+            - configMapRef:
+                name: mealie-configmap
+
+          env:
+            {{- if .Values.postgresql.enabled }}
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgresql.auth.existingSecret | quote }}
+                  key: {{ .Values.postgresql.auth.secretKeys.userPasswordKey | default "password" | quote }}
+            {{- end }}
+
+            {{- if .Values.smtp.enabled }}
+            - name: SMTP_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.smtp.existingSecret | default (printf "%s-smtp" .Release.Name) | quote }}
+                  key: {{ .Values.smtp.secretKeys.user | default "SMTP_USER" | quote }}
+
+            - name: SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.smtp.existingSecret | default (printf "%s-smtp" .Release.Name) | quote }}
+                  key: {{ .Values.smtp.secretKeys.passwordKey | default "SMTP_PASSWORD" | quote }}
+            {{- end }}
+
+            {{- if .Values.ldap.enabled }}
+            - name: LDAP_QUERY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.ldap.existingSecret | default (printf "%s-ldap" .Release.Name) | quote }}
+                  key: {{ .Values.ldap.secretKeys.queryPassword | default "LDAP_QUERY_PASSWORD" | quote }}
+            {{- end }}
+
+            {{- if .Values.oidc.enabled }}
+            - name: OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.oidc.existingSecret | default (printf "%s-oidc" .Release.Name) | quote }}
+                  key: {{ .Values.oidc.secretKeys.clientSecret | default "OIDC_CLIENT_SECRET" | quote }}
+            {{- end }}
+
+          volumeMounts:
+            - mountPath: /app/data
+              name: mealie-api-data-{{ .Release.Namespace }}
+
+      volumes:
+        - name: mealie-api-data-{{ .Release.Namespace }}
+          persistentVolumeClaim:
+            claimName: mealie-api-data-claim-{{ .Release.Namespace }}

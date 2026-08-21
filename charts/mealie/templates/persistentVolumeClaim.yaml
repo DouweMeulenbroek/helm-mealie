@@ -1,0 +1,41 @@
+{{- $claimName := printf "mealie-api-data-claim-%s" .Release.Namespace }}
+{{- $pvc := lookup "v1" "PersistentVolumeClaim" .Release.Namespace $claimName }}
+
+{{- if and .Values.storage.createClaim (not $pvc) }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: {{ $claimName }}
+  {{- if .Values.storage.longhornBackup.enabled }}
+  labels:
+    recurring-job.longhorn.io/source: "enabled"
+    recurring-job-group.longhorn.io/{{ .Values.storage.longhornBackup.recurringJobGroup }}: "enabled"
+  {{- end }}
+spec:
+  storageClassName: {{ .Values.storage.storageClassName | quote }}
+  accessModes:
+    - {{ .Values.storage.accessModes | quote }}
+  resources:
+    requests:
+      storage: {{ .Values.storage.size | quote }}
+{{- else if not .Values.storage.createClaim }}
+# PVC creation disabled; an externally managed PVC is expected.
+{{- else }}
+# PVC already exists, skipping creation.
+{{- end }}
+
+---
+{{- if .Values.postgresql.upgrade.tempStorage }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pg-backup-pvc
+  namespace: {{ .Release.Namespace }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.storage.size | quote }}
+{{- end }}

@@ -1,0 +1,27 @@
+# {{- if .Values.postgresql.upgrade.database }}
+# apiVersion: batch/v1
+# kind: Job
+# metadata:
+#   name: scale-up-mealie
+#   namespace: {{ .Release.Namespace }}
+#   annotations:
+#     "helm.sh/hook": pre-upgrade
+#     "helm.sh/hook-weight": "15"
+#     "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
+
+#     "helm.sh/resource-policy": keep    
+# spec:
+#   template:
+#     spec:
+#       serviceAccountName: pg-dump-restore
+#       restartPolicy: Never
+#       containers:
+#       - name: scale-up
+#         image: bitnami/kubectl:latest
+#         command: ["/bin/sh", "-c"]
+#         args:
+#           - |
+#             echo "🔻 Scaling up Mealie deployment to 0 replicas..."
+#             kubectl scale deployment mealie-webservice --replicas=1 -n {{ .Release.Namespace }}
+#             sleep 30
+# {{- end }}
