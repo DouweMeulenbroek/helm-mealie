@@ -1,7 +1,7 @@
 {{- $claimName := printf "mealie-api-data-claim-%s" .Release.Namespace }}
 {{- $pvc := lookup "v1" "PersistentVolumeClaim" .Release.Namespace $claimName }}
 
-{{- if not $pvc }}
+{{- if and .Values.storage.createClaim (not $pvc) }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -19,14 +19,14 @@ spec:
   resources:
     requests:
       storage: {{ .Values.storage.size | quote }}
+{{- else if not .Values.storage.createClaim }}
+# PVC creation disabled; an externally managed PVC is expected.
 {{- else }}
-# PVC already exists, skipping creation
+# PVC already exists, skipping creation.
 {{- end }}
-
 
 ---
 {{- if .Values.postgresql.upgrade.tempStorage }}
----
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:

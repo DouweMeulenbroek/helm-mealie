@@ -49,6 +49,7 @@ storage:
   #Either longhorn or default or what your personal storagClassName is
   accessModes: "ReadWriteOnce"
 #Do note that hostPath does not support ReadWriteMany and defaults to ReadWriteOnce
+  createClaim: true
 
 #The following section is only required if you want to make use of Longhorn backups based on labels.
   longhornBackup:
