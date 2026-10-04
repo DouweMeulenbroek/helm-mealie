@@ -73,6 +73,10 @@ image:
   tag: "v3.19.2"
 
 replicaCount: 1
+
+# Use Recreate when a single replica mounts ReadWriteOnce storage.
+deploymentStrategy: RollingUpdate
+
 config:  # Backend configuration
   puid: ""              #Default is 911
   pgid: ""              #Default is 911
